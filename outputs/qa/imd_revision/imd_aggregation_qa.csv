@@ -1,0 +1,7 @@
+check,value
+sum of LSOA weights vs MSOA total population (max abs gap),0.0
+sum of LSOA weights vs MSOA working-age population (max abs gap),0.0
+income rate: pandas vs independent SQL (max abs gap),1.1102230246251565e-16
+employment rate: pandas vs independent SQL (max abs gap),1.1102230246251565e-16
+imd_ex_housing: pandas vs independent SQL (max abs gap),1.4210854715202004e-14
+MSOA11s with missing values in any measure,0.0

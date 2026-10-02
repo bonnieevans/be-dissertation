@@ -1,0 +1,151 @@
+# Master configuration for the MSOA-year new-build / house-price panel.
+# Every tunable threshold used across src/ scripts should live here, not
+# hardcoded in code.
+
+study_period:
+  main_panel_start_year: 2012        # raw housing data retained from
+  main_panel_end_year: 2023
+  regression_sample_start_year: 2016 # main_regression_sample flag
+  regression_sample_end_year: 2023
+
+geography:
+  target_geography: MSOA21CD         # principal panel key (see plan: MSOA21
+  reference_geography: MSOA11CD      # is the well-behaved join direction for
+  england_only: true                 # transactions/new-builds; MSOA11CD kept
+  england_prefix: "E"                # as a reference column via the crosswalk)
+  msoa11_to_msoa21_required: true
+
+transactions:
+  old_new_filter: "N"                # established homes only
+  min_price: 1
+  min_floor_area_sqm: 1
+  outlier_trim_pct_low: 0.5
+  outlier_trim_pct_high: 99.5
+  low_sales_count_threshold: 10      # kept for backward compatibility
+  low_sales_count_thresholds: [10, 20, 30, 50]
+
+newbuilds:
+  transaction_type_value: "new dwelling"
+  tenure_imputation_window_months: 24
+  # Raw values confirmed by direct inspection of the deposited EPC source
+  # (outputs/qa/epc_tenure_raw_distribution.csv) - both the current
+  # "rented (...)" wording and the older "rental (...)" wording appear in
+  # the data and must both be mapped, or they silently fall into UNKNOWN.
+  tenure_groups:
+    SOCIAL:
+      - "rental (social)"
+      - "rented (social)"
+    PRIVATE_NONSOCIAL:
+      - "owner-occupied"
+      - "owner occupied"
+      - "rental (private)"
+      - "rented (private)"
+    UNKNOWN:
+      - "unknown"
+      - "not defined - use in the case of a new dwelling for which the intended tenure in not known. it is not to be used for an existing dwelling"
+      - "no data!"
+      - ""
+
+income:
+  baseline_fye: 2012
+  measure: "net income before housing costs"
+  low_income_definition: "bottom_quartile"
+  robustness_definition: "below_median"
+
+# --- Which measures enter the interaction models (IMD 2015 revision) ---
+# deprivation_moderator: imd_ex_housing | imd_ex_housing_living |
+#                        imd_ex_income_housing | imd_income_rate
+# income_moderator:      saie | imd_income_rate
+# Sign convention: SAIE income higher = RICHER; every IMD measure higher =
+# MORE DEPRIVED. Choosing imd_income_rate for both switches is refused.
+moderators:
+  deprivation_moderator: imd_ex_housing
+  income_moderator: saie
+  high_deprivation_quartile: 4       # high_deprivation_q4 = 1 if deprivation_quartile == 4
+
+imd2015:
+  expected_n_lsoa: 32844             # England LSOA11s
+  expected_n_msoa11: 6791            # England MSOA11s
+  deprived_deciles: [1, 2]           # national deciles 1-2 (bottom-20 shares)
+  # 'published' = the File 7 domain ranks (computed by MHCLG from the
+  # UNROUNDED scores; reproduce the official transformed scores in File 9 to
+  # rounding). 'score' = re-rank the rounded published scores (creates large
+  # tie blocks - kept only as a comparison).
+  rank_source: published
+  min_spearman_reproduction: 0.999   # hard stop: 7-domain recombination vs published IMD score
+  # Exponential transform, Technical Report Appendix F:
+  #   R = (N - rank + 1) / N  (1 = most deprived);  X = -23 ln(1 - R (1 - exp(-100/23)))
+  exp_transform_constant: 23
+  exp_transform_scale: 100
+  # Real File 7 column names (trailing whitespace is stripped on load; the
+  # working-age header has a trailing space in the source file).
+  columns:
+    lsoa: "LSOA code (2011)"
+    overall_score: "Index of Multiple Deprivation (IMD) Score"
+    overall_rank: "Index of Multiple Deprivation (IMD) Rank (where 1 is most deprived)"
+    overall_decile: "Index of Multiple Deprivation (IMD) Decile (where 1 is most deprived 10% of LSOAs)"
+    population_total: "Total population: mid 2012 (excluding prisoners)"
+    population_working_age: "Working age population 18-59/64: for use with Employment Deprivation Domain (excluding prisoners)"
+    domains:
+      income:     {score: "Income Score (rate)", rank: "Income Rank (where 1 is most deprived)"}
+      employment: {score: "Employment Score (rate)", rank: "Employment Rank (where 1 is most deprived)"}
+      education:  {score: "Education, Skills and Training Score", rank: "Education, Skills and Training Rank (where 1 is most deprived)"}
+      health:     {score: "Health Deprivation and Disability Score", rank: "Health Deprivation and Disability Rank (where 1 is most deprived)"}
+      crime:      {score: "Crime Score", rank: "Crime Rank (where 1 is most deprived)"}
+      barriers:   {score: "Barriers to Housing and Services Score", rank: "Barriers to Housing and Services Rank (where 1 is most deprived)"}
+      living:     {score: "Living Environment Score", rank: "Living Environment Rank (where 1 is most deprived)"}
+  # Published domain weights (Technical Report Table 3.1). They sum to 0.999,
+  # and the published IMD uses them AS PUBLISHED (verified: reproduces the
+  # official score to 0.0025). They are rescaled to sum to 1 ONLY for the
+  # reduced variants below.
+  domain_weights:
+    income: 0.225
+    employment: 0.225
+    education: 0.135
+    health: 0.135
+    crime: 0.093
+    barriers: 0.093
+    living: 0.093
+  variants:
+    imd_ex_housing:         [income, employment, education, health, crime, living]   # drop Barriers (primary)
+    imd_ex_housing_living:  [income, employment, education, health, crime]           # drop Barriers + Living Env (sensitivity)
+    imd_ex_income_housing:  [employment, education, health, crime, living]           # drop Income + Barriers (use with SAIE)
+  # File 9 (published exponentially transformed domain scores) - independent
+  # check on the transform; reported, not a hard stop.
+  file9_xlsx: data/raw/imd/imd2015/File_9_ID2015_transformed_domain_scores.xlsx
+
+lagged_exposure:
+  lags_years: [1, 2, 3]
+  primary_treatment: newbuilds_lag1_per_1000       # PRIMARY treatment
+  robustness_treatment: newbuilds_prev3yr_per_1000 # primary robustness variant
+
+proximity:
+  bands_metres: [500, 1000, 2000]
+  enabled: true   # set false if reliable UPRN coordinates cannot be obtained
+
+cpih:
+  base_year: 2015
+
+diagnostics:
+  # Interaction terms are NOT precomputed/stored in the final panel (per the
+  # user's instruction) - they are built on the fly wherever needed
+  # (15_run_diagnostics.py, and at regression time) as
+  # newbuilds_lag1_per_1000 * <zscore>.
+  zscore_variables:
+    - income_z
+    - deprivation_z
+    - social_rent_z
+    - density_z
+    - degree_share_z
+    - unemployment_z
+  interaction_variables:
+    - newbuild_x_income
+    - newbuild_x_deprivation
+    - newbuild_x_socialrent
+    - newbuild_x_density
+
+paths:
+  raw: data/raw
+  interim: data/interim
+  processed: data/processed
+  outputs: outputs

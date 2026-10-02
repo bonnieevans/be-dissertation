@@ -1,0 +1,16 @@
+var_a,var_b,pearson,spearman
+log_saie_income,imd_income_rate,-0.6831888688201992,-0.7033625971398557
+log_saie_income,imd_ex_housing,-0.7158575059511444,-0.7422637001185808
+log_saie_income,imd_ex_income_housing,-0.7205458082077659,-0.7488528545375179
+log_saie_income,imd_overall_score_pw (robustness only),-0.695779619851371,-0.7163584787914665
+log_saie_income,imd_barriers_domain_score,0.10933917411097388,0.1756755796711078
+imd_income_rate,imd_ex_housing,0.9746832063274526,0.9730154094264389
+imd_income_rate,imd_ex_income_housing,0.9518001415389058,0.9519054678411369
+imd_income_rate,imd_overall_score_pw (robustness only),0.9750325719396327,0.9629374460171269
+imd_income_rate,imd_barriers_domain_score,0.13288531432354542,0.07425815767777819
+imd_ex_housing,imd_ex_income_housing,0.9960854437504735,0.9967562374661353
+imd_ex_housing,imd_overall_score_pw (robustness only),0.9936998247091023,0.9900514942934995
+imd_ex_housing,imd_barriers_domain_score,0.07486171665826681,0.05000464098610979
+imd_ex_income_housing,imd_overall_score_pw (robustness only),0.9872347520711092,0.9866575959892574
+imd_ex_income_housing,imd_barriers_domain_score,0.05092240871923601,0.03710009411349995
+imd_overall_score_pw (robustness only),imd_barriers_domain_score,0.18438508993716532,0.16776984330063138

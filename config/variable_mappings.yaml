@@ -1,0 +1,51 @@
+# Raw -> clean column crosswalk, captured from direct inspection of the UCL
+# ReShare 857911 files (see outputs/qa/schema_tranall_link.csv and
+# outputs/qa/schema_epc_source.csv for the full raw column lists/dtypes).
+
+linked_transactions:
+  source_file: tranall_link_26122024.csv
+  source_rows: 22449587
+  source_cols: 106
+  coverage: "1995-01-01 to 2024-10-31"
+  key_columns:
+    transactionid: {clean_name: transaction_id, dtype: varchar}
+    dateoftransfer: {clean_name: transaction_date, dtype: date}
+    price: {clean_name: transaction_price, dtype: bigint}
+    postcode: {clean_name: postcode, dtype: varchar}
+    propertytype: {clean_name: property_type_ppd, dtype: varchar, note: "D/S/T/F/O, Land Registry code"}
+    oldnew: {clean_name: old_new, dtype: varchar, note: "Y=new build, N=established"}
+    duration: {clean_name: duration, dtype: varchar, note: "F=freehold, L=leasehold"}
+    LMK_KEY: {clean_name: lmk_key, dtype: varchar, note: "EPC certificate key, join to EPC source"}
+    classt: {clean_name: classt, dtype: varchar, note: "UCL-authored match-quality/classification variable"}
+    priceper: {clean_name: priceper_ucl, dtype: double, note: "UCL-authored price per sqm, compare vs calculated_ppsqm"}
+    TOTAL_FLOOR_AREA: {clean_name: total_floor_area, dtype: double}
+    UPRN: {clean_name: uprn, dtype: bigint}
+    TRANSACTION_TYPE: {clean_name: epc_transaction_type, dtype: varchar}
+    TENURE: {clean_name: tenure_raw, dtype: varchar}
+    CONSTRUCTION_AGE_BAND: {clean_name: construction_age_band, dtype: varchar}
+    PROPERTY_TYPE: {clean_name: property_type_epc, dtype: varchar}
+    BUILT_FORM: {clean_name: built_form, dtype: varchar}
+    NUMBER_HABITABLE_ROOMS: {clean_name: number_habitable_rooms, dtype: double}
+    LODGEMENT_DATE: {clean_name: lodgement_date, dtype: date}
+    INSPECTION_DATE: {clean_name: inspection_date, dtype: date}
+    lad23cd: {clean_name: lad23cd, dtype: varchar, note: "from NSPL, per UCL readme"}
+
+epc_source:
+  source_file: epc_2024.csv
+  source_rows: 26979573
+  source_cols: 87
+  coverage: "up to 2024-10-31, address fields removed by UCL"
+  note: "No postcode/address fields deposited -> must join geography via UPRN"
+  key_columns:
+    LMK_KEY: {clean_name: lmk_key, dtype: varchar}
+    UPRN: {clean_name: uprn, dtype: bigint}
+    UPRN_SOURCE: {clean_name: uprn_source, dtype: varchar}
+    LODGEMENT_DATE: {clean_name: lodgement_date, dtype: date}
+    INSPECTION_DATE: {clean_name: inspection_date, dtype: date}
+    TRANSACTION_TYPE: {clean_name: transaction_type, dtype: varchar}
+    TENURE: {clean_name: tenure_raw, dtype: varchar}
+    TOTAL_FLOOR_AREA: {clean_name: total_floor_area, dtype: double}
+    NUMBER_HABITABLE_ROOMS: {clean_name: number_habitable_rooms, dtype: double}
+    CONSTRUCTION_AGE_BAND: {clean_name: construction_age_band, dtype: varchar}
+    PROPERTY_TYPE: {clean_name: property_type, dtype: varchar}
+    BUILT_FORM: {clean_name: built_form, dtype: varchar}

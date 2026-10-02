@@ -1,0 +1,29 @@
+.env
+__pycache__/
+*.pyc
+.pytest_cache/
+.DS_Store
+.ipynb_checkpoints/
+
+# Raw/interim/processed data are large and reproducible from source - keep
+# out of version control, but keep the directory skeleton.
+data/raw/*
+data/interim/*
+data/processed/*
+!data/raw/.gitkeep
+!data/interim/.gitkeep
+!data/processed/.gitkeep
+!data/raw/**/.gitkeep
+!data/interim/**/.gitkeep
+
+outputs/logs/*
+!outputs/logs/.gitkeep
+
+# Excel lock files
+~$*
+
+# Small final MSOA-level tables are the project's deliverable: keep them
+# (the 75 MB CSV copy of the panel is left out; the parquet and workbook carry it).
+!data/processed/final_msoa_year_dissertation_panel.parquet
+!data/processed/msoa_baseline_characteristics.parquet
+!data/processed/msoa_baseline_characteristics.csv

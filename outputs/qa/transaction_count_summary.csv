@@ -1,0 +1,2 @@
+n_transactions_established_trimmed,p10,p25,p50,p75,p90,median_transactions_per_msoa_year,share_msoa_years_sales_under_10,share_msoa_years_sales_under_20,share_msoa_years_sales_under_30,share_msoa_years_sales_under_50
+8143571,51.0,70.0,95.0,124.0,156.0,95.0,0.0010921317429931773,0.007276787905561282,0.022652530309723654,0.09452461591321848

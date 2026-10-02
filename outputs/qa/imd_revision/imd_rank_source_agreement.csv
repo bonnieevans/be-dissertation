@@ -1,0 +1,8 @@
+domain,share_ranks_identical,max_rank_gap,published_ranks_unique
+income,0.0170198514188284,239.0,False
+employment,0.014188284009255876,311.0,False
+education,0.7293874071367678,6.0,False
+health,0.13561076604554864,26.0,False
+crime,0.11782974059188893,27.0,False
+barriers,0.6684021434660821,7.0,False
+living,0.7232980148581172,5.0,False

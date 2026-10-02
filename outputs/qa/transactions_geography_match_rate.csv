@@ -1,0 +1,3 @@
+file,n_total,n_matched_msoa11,match_rate_msoa11,n_matched_msoa21,match_rate_msoa21,n_england
+transactions_2012_2023_trimmed.parquet,8582035,8582028,0.9999991843426413,8582035,1.0,8143571
+transactions_2012_2023_untrimmed.parquet,8668693,8668685,0.999999077138849,8668693,1.0,8225599

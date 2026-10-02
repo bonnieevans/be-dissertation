@@ -1,0 +1,4 @@
+comparison,n_msoa11,share_changing_quartile,share_moving_2plus_quartiles,share_top_quartile_before,of_top_before_share_still_top,spearman_between_measures
+PRIMARY: overall IMD score -> imd_ex_housing,6791,0.10513915476365779,0.0,0.2500368134295391,0.9540636042402827,0.9900514942934995
+overall IMD score -> imd_ex_income_housing,6791,0.1236931232513621,0.0,0.2500368134295391,0.9240282685512368,0.9866575959892574
+"previous moderator (quartile of old bottom-20 share; tied zeros, order arbitrary) -> imd_ex_housing",6791,0.487704314533942,0.13193933146811956,0.2500368134295391,0.9069493521790342,0.839381203321986
