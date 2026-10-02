@@ -1,0 +1,29 @@
+spec_id,formula,sample,vcov,weights,n_obs,r2_within,status,note
+M3_se_iid,log_median_ppsqm ~ newbuilds_lag1_per_1000 | msoa11cd + year,main_2016_2023,iid,,54312,0.00012137092929842552,ok,SE: iid
+M3_se_hc1,log_median_ppsqm ~ newbuilds_lag1_per_1000 | msoa11cd + year,main_2016_2023,hc1,,54312,0.00012137092929842552,ok,SE: hc1
+M3_se_msoa,log_median_ppsqm ~ newbuilds_lag1_per_1000 | msoa11cd + year,main_2016_2023,msoa,,54312,0.00012137092929842552,ok,SE: msoa
+M3_se_lad,log_median_ppsqm ~ newbuilds_lag1_per_1000 | msoa11cd + year,main_2016_2023,lad,,54312,0.00012137092929842552,ok,SE: lad
+M3_se_region,log_median_ppsqm ~ newbuilds_lag1_per_1000 | msoa11cd + year,main_2016_2023,region,,54312,0.00012137092929842552,ok,SE: region
+M3_se_lad_and_year,log_median_ppsqm ~ newbuilds_lag1_per_1000 | msoa11cd + year,main_2016_2023,lad_and_year,,54312,0.00012137092929842552,ok,SE: lad_and_year
+M6_se_iid,log_median_ppsqm ~ newbuilds_lag1_per_1000 | msoa11cd + lad_year,main_2016_2023,iid,,54312,6.1126918646792205e-06,ok,SE: iid
+M6_se_hc1,log_median_ppsqm ~ newbuilds_lag1_per_1000 | msoa11cd + lad_year,main_2016_2023,hc1,,54312,6.1126918646792205e-06,ok,SE: hc1
+M6_se_msoa,log_median_ppsqm ~ newbuilds_lag1_per_1000 | msoa11cd + lad_year,main_2016_2023,msoa,,54312,6.1126918646792205e-06,ok,SE: msoa
+M6_se_lad,log_median_ppsqm ~ newbuilds_lag1_per_1000 | msoa11cd + lad_year,main_2016_2023,lad,,54312,6.1126918646792205e-06,ok,SE: lad
+M6_se_region,log_median_ppsqm ~ newbuilds_lag1_per_1000 | msoa11cd + lad_year,main_2016_2023,region,,54312,6.1126918646792205e-06,ok,SE: region
+M6_se_lad_and_year,log_median_ppsqm ~ newbuilds_lag1_per_1000 | msoa11cd + lad_year,main_2016_2023,lad_and_year,,54312,6.1126918646792205e-06,ok,SE: lad_and_year
+M3_se_mods_msoa,log_median_ppsqm ~ newbuilds_lag1_per_1000 + x_income + x_deprivation + x_social_rent + x_density | msoa11cd + year,main_2016_2023,msoa,,54312,0.0009276207085193722,ok,SE: msoa
+M3_se_mods_lad,log_median_ppsqm ~ newbuilds_lag1_per_1000 + x_income + x_deprivation + x_social_rent + x_density | msoa11cd + year,main_2016_2023,lad,,54312,0.0009276207085193722,ok,SE: lad
+M3_se_mods_region,log_median_ppsqm ~ newbuilds_lag1_per_1000 + x_income + x_deprivation + x_social_rent + x_density | msoa11cd + year,main_2016_2023,region,,54312,0.0009276207085193722,ok,SE: region
+M6_se_mods_msoa,log_median_ppsqm ~ newbuilds_lag1_per_1000 + x_income + x_deprivation + x_social_rent + x_density | msoa11cd + lad_year,main_2016_2023,msoa,,54312,0.00025324951196104006,ok,SE: msoa
+M6_se_mods_lad,log_median_ppsqm ~ newbuilds_lag1_per_1000 + x_income + x_deprivation + x_social_rent + x_density | msoa11cd + lad_year,main_2016_2023,lad,,54312,0.00025324951196104006,ok,SE: lad
+M6_se_mods_region,log_median_ppsqm ~ newbuilds_lag1_per_1000 + x_income + x_deprivation + x_social_rent + x_density | msoa11cd + lad_year,main_2016_2023,region,,54312,0.00025324951196104006,ok,SE: region
+M3_wcb_newbuilds_lag1_per_1000,log_median_ppsqm ~ newbuilds_lag1_per_1000 | msoa11cd + year,main_2016_2023,lad,,54312,0.00012137092929842552,ok,
+M3_wcb_x_income,log_median_ppsqm ~ newbuilds_lag1_per_1000 + x_income | msoa11cd + year,main_2016_2023,lad,,54312,0.0001901832736759257,ok,
+M3_wcb_x_deprivation,log_median_ppsqm ~ newbuilds_lag1_per_1000 + x_deprivation | msoa11cd + year,main_2016_2023,lad,,54312,0.00017418275374159187,ok,
+M3_wcb_x_social_rent,log_median_ppsqm ~ newbuilds_lag1_per_1000 + x_social_rent | msoa11cd + year,main_2016_2023,lad,,54312,0.00045233611136807905,ok,
+M3_wcb_x_density,log_median_ppsqm ~ newbuilds_lag1_per_1000 + x_density | msoa11cd + year,main_2016_2023,lad,,54312,0.0005230906349424913,ok,
+M6_wcb_newbuilds_lag1_per_1000,log_median_ppsqm ~ newbuilds_lag1_per_1000 | msoa11cd + lad_year,main_2016_2023,lad,,54312,6.1126918646792205e-06,ok,
+M6_wcb_x_income,log_median_ppsqm ~ newbuilds_lag1_per_1000 + x_income | msoa11cd + lad_year,main_2016_2023,lad,,54312,1.8088977226438097e-05,ok,
+M6_wcb_x_deprivation,log_median_ppsqm ~ newbuilds_lag1_per_1000 + x_deprivation | msoa11cd + lad_year,main_2016_2023,lad,,54312,3.897480763970229e-05,ok,
+M6_wcb_x_social_rent,log_median_ppsqm ~ newbuilds_lag1_per_1000 + x_social_rent | msoa11cd + lad_year,main_2016_2023,lad,,54312,1.0001048680652325e-05,ok,
+M6_wcb_x_density,log_median_ppsqm ~ newbuilds_lag1_per_1000 + x_density | msoa11cd + lad_year,main_2016_2023,lad,,54312,1.2167761895165441e-05,ok,

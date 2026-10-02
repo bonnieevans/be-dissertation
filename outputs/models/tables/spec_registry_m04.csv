@@ -1,0 +1,15 @@
+spec_id,formula,sample,vcov,weights,n_obs,r2_within,status,note
+M3_eventstudy_A_two_leads_2016_2020,log_median_ppsqm ~ N_lead2 + N_lead1 + N_t + N_lag1 + N_lag2 + N_lag3 | msoa11cd + year,A_two_leads_2016_2020,lad,,33945,0.00040843532425771656,ok,A_two_leads_2016_2020
+M6_eventstudy_A_two_leads_2016_2020,log_median_ppsqm ~ N_lead2 + N_lead1 + N_t + N_lag1 + N_lag2 + N_lag3 | msoa11cd + lad_year,A_two_leads_2016_2020,lad,,33945,0.00017162485574706565,ok,A_two_leads_2016_2020
+M3_eventstudy_B_one_lead_2016_2021,log_median_ppsqm ~ N_lead1 + N_t + N_lag1 + N_lag2 + N_lag3 | msoa11cd + year,B_one_lead_2016_2021,lad,,40734,0.00044135227181218983,ok,B_one_lead_2016_2021
+M6_eventstudy_B_one_lead_2016_2021,log_median_ppsqm ~ N_lead1 + N_t + N_lag1 + N_lag2 + N_lag3 | msoa11cd + lad_year,B_one_lead_2016_2021,lad,,40734,0.00010488763193106099,ok,B_one_lead_2016_2021
+M3_eventstudy_C_one_lead_reaching_2023_2016_2022,log_median_ppsqm ~ N_lead1 + N_t + N_lag1 + N_lag2 + N_lag3 | msoa11cd + year,C_one_lead_reaching_2023_2016_2022,lad,,47523,0.0008252617433348597,ok,C_one_lead_reaching_2023_2016_2022
+M6_eventstudy_C_one_lead_reaching_2023_2016_2022,log_median_ppsqm ~ N_lead1 + N_t + N_lag1 + N_lag2 + N_lag3 | msoa11cd + lad_year,C_one_lead_reaching_2023_2016_2022,lad,,47523,0.0002566762888221996,ok,C_one_lead_reaching_2023_2016_2022
+M3_reverse_no lagged construction,N_t ~ dlp_l1 + dlp_l2 | msoa11cd + year,2016-2023,lad,,40734,9.711029039660701e-05,ok,reverse direction
+M3_reverse_with lagged construction,N_t ~ dlp_l1 + dlp_l2 + N_lag1 | msoa11cd + year,2016-2023,lad,,40734,0.016835166666573476,ok,reverse direction
+M6_reverse_no lagged construction,N_t ~ dlp_l1 + dlp_l2 | msoa11cd + lad_year,2016-2023,lad,,40734,5.1037133955822434e-05,ok,reverse direction
+M6_reverse_with lagged construction,N_t ~ dlp_l1 + dlp_l2 + N_lag1 | msoa11cd + lad_year,2016-2023,lad,,40734,0.014542310409446979,ok,reverse direction
+pre_period_balance_region FE only,log1p_cum ~ pre_growth_2012_2015 | region_code,cross-section,lad,,6791,0.0002349643615180419,ok,region FE only
+pre_period_balance_no FE,log1p_cum ~ pre_growth_2012_2015,cross-section,lad,,6791,,ok,no FE
+M3_pretrend_event_study,"log_median_ppsqm ~ i(year, top_q, ref=2015) | msoa11cd + year",2012-2023,lad,,81468,0.002042169161593943,ok,top-quartile construction x year
+M6_pretrend_event_study,"log_median_ppsqm ~ i(year, top_q, ref=2015) | msoa11cd + lad_year",2012-2023,lad,,81468,0.0010348532342251415,ok,top-quartile construction x year

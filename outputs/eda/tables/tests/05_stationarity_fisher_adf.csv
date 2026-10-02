@@ -1,0 +1,7 @@
+sample,series,N,n_constant_series_excluded,ADF_share_reject_5pct,Fisher_inverse_normal_Z,Fisher_p
+full_2012_2023,log_median_ppsqm,6791,0,0.06007951700780445,60.147582196607985,1.0
+full_2012_2023,d_log_price,0,0,,,
+full_2012_2023,newbuilds_per_1000,6764,27,0.4231224127735068,,
+main_2016_2023,log_median_ppsqm,6791,0,0.016050655279045797,86.0537380305427,1.0
+main_2016_2023,d_log_price,6791,0,0.5355617729347666,-165.82065665516225,0.0
+main_2016_2023,newbuilds_per_1000,6712,79,0.2817342073897497,,

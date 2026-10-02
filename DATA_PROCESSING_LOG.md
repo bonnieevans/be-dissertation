@@ -312,3 +312,30 @@ workbook's `imd_revision` sheet.
    still pass (no duplicate keys, England only, `baseline_households_2011 > 0`,
    baseline values constant within MSOA across years, now including the new
    moderator columns).
+
+## J. Exploratory analysis and baseline specification lab (2026-10-02)
+
+These steps read the final panel and write only to `outputs/eda/`, `outputs/models/` and `data/interim/eda/`.
+Full results: `outputs/eda/EDA_REPORT.md` and `outputs/models/MODEL_LAB_REPORT.md`.
+
+1. **Environment.** `linearmodels`, `pyfixest`, `esda` and `libpysal` were installed. The install upgraded pandas to 3.0.6,
+   which DuckDB 1.2.1 cannot read (new string dtype); pandas was returned to 2.3.3 and `requirements.txt` pins `pandas<3`.
+   The final panel and baseline table were regenerated and are identical to the earlier versions.
+2. **New source.** ONS MSOA (December 2011) BGC boundaries, England subset (6,791 areas), downloaded by
+   `src/eda/00_download_msoa11_boundaries.py` and recorded in `config/source_manifest.csv`.
+3. **Outcome definition.** `log_median_ppsqm` is built from the **nominal** price per m2 (script 12 uses `nominal_ppsqm`); the
+   CPIH-deflated `real_ppsqm` exists in the transaction files but is not the panel outcome. Year effects absorb the common
+   nominal trend.
+4. **Exploratory analysis** (scripts `eda_01`-`eda_07`): balance and quality, within/between variance, distributions, sale
+   counts, correlations at four levels, trends, PCA, stationarity, cross-sectional dependence, spatial autocorrelation.
+5. **Panel tests were implemented from the published formulas and validated by simulation** (N = 2,000; T = 12 and 8):
+   Harris-Tzavalis (with and without unit trends), Hadri (finite-T null moments by simulation) and Pesaran CD
+   (`src/eda/panel_tests.py`; unit tests in `tests/test_panel_tests_and_models.py`).
+6. **Baseline specification lab** (`m01`-`m08`): estimation sample = main sample 2016-2023 excluding LADs with a single MSOA
+   (54,312 MSOA-years; 6,789 MSOAs; 294 LADs); standard errors clustered by LAD; a registry of all 192 regressions run.
+7. **Not done, by decision.** The place-based policy registry (Phase 2) is not built, so the funding-control check is not run;
+   `m07` documents the algebra for any LAD-year variable.
+8. **Known data limitation for lead terms.** New-build completions in 2023 are incomplete (about 77,000 against about 187,000
+   in 2022); leads that reach 2023 are analysed in a separate sample (`m04`).
+9. **Notes written:** `docs/geography_justification.md` (draft, for editing) and `docs/iv_literature_note.md` (citations
+   written from memory; to be verified).

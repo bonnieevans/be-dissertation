@@ -1,0 +1,7 @@
+variable,total_variance,share_variance_left_M3,share_variance_left_M6
+"1. LAD-level, constant over time",0.9363712114851507,0.0,0.0
+"2. LAD-level, changing over time (LAD x year)",0.9825329908657664,0.8542417866689943,1.4076139723973417e-33
+3. LAD-level constant x national year shock,1.1100678628639373,0.8433437169715312,1.5134493018054363e-33
+4. MSOA-level constant (baseline density) x national year shock,1.1660058101513922,0.8573626731879675,0.41200780792493574
+"5. MSOA-level, changing over time (random)",0.9965766028259668,0.8706682324312011,0.8321671003974581
+"treatment x (new-builds per 1,000, lag 1)",311.0488031425017,0.4677458041980446,0.44530614602518376

@@ -32,6 +32,7 @@ def get_logger(name: str) -> logging.Logger:
     if logger.handlers:
         return logger
     logger.setLevel(logging.INFO)
+    logger.propagate = False   # avoid duplicate lines when a library configures the root logger
 
     fmt = logging.Formatter("%(asctime)s [%(levelname)s] %(name)s: %(message)s")
 

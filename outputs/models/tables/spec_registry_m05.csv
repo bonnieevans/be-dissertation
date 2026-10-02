@@ -1,0 +1,13 @@
+spec_id,formula,sample,vcov,weights,n_obs,r2_within,status,note
+M3_spill_own only (full sample),log_median_ppsqm ~ newbuilds_lag1_per_1000 | msoa11cd + year,main_2016_2023,lad,,54312,0.00012137092929842552,ok,own only (full sample)
+M3_spill_own + all-neighbour mean,log_median_ppsqm ~ newbuilds_lag1_per_1000 + nb_mean_all | msoa11cd + year,main_2016_2023,lad,,54312,0.0003752877374922914,ok,own + all-neighbour mean
+M3_spill_own only (cross-LAD-neighbour sample),log_median_ppsqm ~ newbuilds_lag1_per_1000 | msoa11cd + year,main_2016_2023,lad,,27192,0.0002214206433479582,ok,own only (cross-LAD-neighbour sample)
+M3_spill_own + cross-LAD neighbour mean,log_median_ppsqm ~ newbuilds_lag1_per_1000 + nb_mean_cross_lad | msoa11cd + year,main_2016_2023,lad,,27192,0.0004844278059260576,ok,own + cross-LAD neighbour mean
+M6_spill_own only (full sample),log_median_ppsqm ~ newbuilds_lag1_per_1000 | msoa11cd + lad_year,main_2016_2023,lad,,54312,6.1126918646792205e-06,ok,own only (full sample)
+M6_spill_own + all-neighbour mean,log_median_ppsqm ~ newbuilds_lag1_per_1000 + nb_mean_all | msoa11cd + lad_year,main_2016_2023,lad,,54312,0.00010431887772355264,ok,own + all-neighbour mean
+M6_spill_own only (cross-LAD-neighbour sample),log_median_ppsqm ~ newbuilds_lag1_per_1000 | msoa11cd + lad_year,main_2016_2023,lad,,27192,8.606210940564907e-07,ok,own only (cross-LAD-neighbour sample)
+M6_spill_own + cross-LAD neighbour mean,log_median_ppsqm ~ newbuilds_lag1_per_1000 + nb_mean_cross_lad | msoa11cd + lad_year,main_2016_2023,lad,,27192,1.083355147080134e-05,ok,own + cross-LAD neighbour mean
+M3_spill_mods_four moderators,log_median_ppsqm ~ newbuilds_lag1_per_1000 + x_income + x_deprivation + x_social_rent + x_density | msoa11cd + year,main_2016_2023,lad,,54312,0.0009276207085193722,ok,four moderators
+M3_spill_mods_four moderators + neighbour mean,log_median_ppsqm ~ newbuilds_lag1_per_1000 + x_income + x_deprivation + x_social_rent + x_density + nb_mean_all | msoa11cd + year,main_2016_2023,lad,,54312,0.0012130914926142822,ok,four moderators + neighbour mean
+M6_spill_mods_four moderators,log_median_ppsqm ~ newbuilds_lag1_per_1000 + x_income + x_deprivation + x_social_rent + x_density | msoa11cd + lad_year,main_2016_2023,lad,,54312,0.00025324951196104006,ok,four moderators
+M6_spill_mods_four moderators + neighbour mean,log_median_ppsqm ~ newbuilds_lag1_per_1000 + x_income + x_deprivation + x_social_rent + x_density + nb_mean_all | msoa11cd + lad_year,main_2016_2023,lad,,54312,0.0003467555846963233,ok,four moderators + neighbour mean

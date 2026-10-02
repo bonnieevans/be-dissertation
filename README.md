@@ -67,9 +67,42 @@ for f in 00_check_environment 01_inventory_ucl_files 02_clean_transactions \
 done
 ```
 
-Run tests with `pytest tests/` (36 tests: price calculation, geography
+Run tests with `pytest tests/` (46 tests: price calculation, geography
 joins, new-build dedup, IMD transform / reproduction of the published IMD /
-population weighting / moderator switches, income-duplication QA).
+population weighting / moderator switches, income-duplication QA, panel unit-root /
+cross-section-dependence tests, within transformation, wild-cluster bootstrap).
+
+## Exploratory analysis and baseline specification lab
+
+Two further layers sit on top of the final panel. Neither writes to `data/processed`.
+
+**`src/eda/`: exploratory data analysis** (report: `outputs/eda/EDA_REPORT.md`)
+
+| Script | Does |
+|---|---|
+| `eda/00_download_msoa11_boundaries.py` | downloads the England MSOA11 boundaries (ONS BGC) to `data/raw/geography/msoa11_boundaries/` |
+| `eda/eda_01_data_structure.py` | balance, missingness, within/between variance, distributions, outliers, sale-count profile, low-sale areas |
+| `eda/eda_02_correlations.py` | pooled / between / within / two-way-within correlations, moderator correlations, partial correlations, binned scatters |
+| `eda/eda_03_trends.py` | national series, paths by moderator quartile and region, common-shock shares, autocorrelation, heatmaps, maps |
+| `eda/eda_04_pca.py` | PCA of the moderators and IMD domains; PCA of price paths; Bai-Ng factor count |
+| `eda/eda_05_stationarity_dependence.py` | Harris-Tzavalis, Hadri and Fisher-ADF stationarity tests (implemented and validated by simulation in `panel_tests.py`); Pesaran CD test |
+| `eda/eda_06_spatial.py` | queen-contiguity neighbours, Moran's I by year, LISA maps |
+| `eda/eda_07_report.py` | assembles `EDA_REPORT.md` from the tables |
+
+**`src/models/`: baseline specification lab** (report: `outputs/models/MODEL_LAB_REPORT.md`; every regression is logged in `outputs/models/tables/spec_registry_ALL.csv`)
+
+| Script | Does |
+|---|---|
+| `models/m01_fe_ladder.py` | y on x with no controls, then pooled, year FE, MSOA FE, MSOA+year, LAD+year, MSOA+region x year, MSOA+LAD x year; FE F-tests, Mundlak, serial correlation, heteroskedasticity, residual dependence |
+| `models/m02_sales_threshold_weights.py` | minimum-sales thresholds, weighting by sale count, sample composition |
+| `models/m03_moderators.py` | moderator interactions: singles, pairs, triples, all; with/without moderator x year controls; PCA composites; VIFs; Holm adjustment |
+| `models/m04_endogeneity_pretrends.py` | leads and lags, reverse direction, pre-period balance and event study |
+| `models/m05_spillovers.py` | neighbouring-MSOA construction variable |
+| `models/m06_clustering_inference.py` | clustering comparison and wild-cluster bootstrap |
+| `models/m07_iv_feasibility.py` | mechanical check of which variation survives the fixed effects |
+| `models/m08_report.py` | assembles `MODEL_LAB_REPORT.md` |
+
+Run order: `cd src/eda && for f in 00_download_msoa11_boundaries eda_01_data_structure eda_02_correlations eda_03_trends eda_04_pca eda_05_stationarity_dependence eda_06_spatial eda_07_report; do python3 $f.py || break; done`, then the same in `src/models` for `m01 ... m08`. Interaction terms, leads, lags and neighbour variables are built in memory; none is stored in a permanent dataset. Notes: `docs/geography_justification.md` (draft), `docs/iv_literature_note.md`.
 
 ## Geography: MSOA11 is primary, MSOA21 is a reference column
 

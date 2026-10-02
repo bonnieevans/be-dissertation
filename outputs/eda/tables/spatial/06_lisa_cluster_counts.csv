@@ -1,0 +1,16 @@
+variable,cluster_type,n_msoa
+deprivation (baseline),not significant,4113
+deprivation (baseline),Low-Low,1594
+deprivation (baseline),High-High,941
+deprivation (baseline),Low-High,98
+deprivation (baseline),High-Low,45
+"cumulative new-builds per 1,000 (2016-23)",not significant,5584
+"cumulative new-builds per 1,000 (2016-23)",Low-Low,508
+"cumulative new-builds per 1,000 (2016-23)",High-High,349
+"cumulative new-builds per 1,000 (2016-23)",Low-High,278
+"cumulative new-builds per 1,000 (2016-23)",High-Low,72
+log price growth 2016-23,not significant,4108
+log price growth 2016-23,Low-Low,1362
+log price growth 2016-23,High-High,1202
+log price growth 2016-23,Low-High,91
+log price growth 2016-23,High-Low,28

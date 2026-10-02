@@ -1,0 +1,16 @@
+spec_id,formula,sample,vcov,weights,n_obs,r2_within,status,note
+M3_sales_no restriction,log_median_ppsqm ~ newbuilds_lag1_per_1000 | msoa11cd + year,no restriction,lad,,54312,0.00012137092929842552,ok,no restriction
+M6_sales_no restriction,log_median_ppsqm ~ newbuilds_lag1_per_1000 | msoa11cd + lad_year,no restriction,lad,,54312,6.1126918646792205e-06,ok,no restriction
+M3_sales_sales >= 10,log_median_ppsqm ~ newbuilds_lag1_per_1000 | msoa11cd + year,sales >= 10,lad,,54237,0.00011299853772794854,ok,sales >= 10
+M6_sales_sales >= 10,log_median_ppsqm ~ newbuilds_lag1_per_1000 | msoa11cd + lad_year,sales >= 10,lad,,54237,6.050897048415216e-06,ok,sales >= 10
+M3_sales_sales >= 20,log_median_ppsqm ~ newbuilds_lag1_per_1000 | msoa11cd + year,sales >= 20,lad,,53855,0.00010888156198363141,ok,sales >= 20
+M6_sales_sales >= 20,log_median_ppsqm ~ newbuilds_lag1_per_1000 | msoa11cd + lad_year,sales >= 20,lad,,53855,5.334230917974914e-06,ok,sales >= 20
+M3_sales_sales >= 30,log_median_ppsqm ~ newbuilds_lag1_per_1000 | msoa11cd + year,sales >= 30,lad,,53006,9.825253494366581e-05,ok,sales >= 30
+M6_sales_sales >= 30,log_median_ppsqm ~ newbuilds_lag1_per_1000 | msoa11cd + lad_year,sales >= 30,lad,,53005,1.489333367743484e-06,ok,sales >= 30
+M3_sales_sales >= 50,log_median_ppsqm ~ newbuilds_lag1_per_1000 | msoa11cd + year,sales >= 50,lad,,49289,0.00015846879149972182,ok,sales >= 50
+M6_sales_sales >= 50,log_median_ppsqm ~ newbuilds_lag1_per_1000 | msoa11cd + lad_year,sales >= 50,lad,,49287,1.4098527526207327e-05,ok,sales >= 50
+M3_sales_weighted by sale_count,log_median_ppsqm ~ newbuilds_lag1_per_1000 | msoa11cd + year,weighted by sale_count,lad,sale_count,54312,0.0003152004988339341,ok,weighted by sale_count
+M6_sales_weighted by sale_count,log_median_ppsqm ~ newbuilds_lag1_per_1000 | msoa11cd + lad_year,weighted by sale_count,lad,sale_count,54312,1.663176479616002e-05,ok,weighted by sale_count
+M3_sales_sales >= 30 and weighted,log_median_ppsqm ~ newbuilds_lag1_per_1000 | msoa11cd + year,sales >= 30 and weighted,lad,sale_count,53006,0.000324369403011171,ok,sales >= 30 and weighted
+M6_sales_sales >= 30 and weighted,log_median_ppsqm ~ newbuilds_lag1_per_1000 | msoa11cd + lad_year,sales >= 30 and weighted,lad,sale_count,53005,1.7614781047226025e-05,ok,sales >= 30 and weighted
+M3_for_variance,log_median_ppsqm ~ newbuilds_lag1_per_1000 | msoa11cd + year,main_2016_2023,lad,,54312,0.00012137092929842552,ok,variance model

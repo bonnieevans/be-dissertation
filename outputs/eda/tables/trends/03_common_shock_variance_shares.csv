@@ -1,0 +1,10 @@
+variable,common_component,share_of_within_msoa_variance
+log_median_ppsqm,year,0.8475035414186324
+log_median_ppsqm,region x year,0.891269747814415
+log_median_ppsqm,LAD x year,0.9336551730517332
+d_log_price,year,0.18775404308785715
+d_log_price,region x year,0.28852291089528903
+d_log_price,LAD x year,0.3539780966589944
+newbuilds_per_1000,year,0.02680805277743692
+newbuilds_per_1000,region x year,0.029290706929282817
+newbuilds_per_1000,LAD x year,0.07839122647218544

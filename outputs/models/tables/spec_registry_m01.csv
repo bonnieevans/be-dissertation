@@ -1,0 +1,36 @@
+spec_id,formula,sample,vcov,weights,n_obs,r2_within,status,note
+M0_lad,log_median_ppsqm ~ newbuilds_lag1_per_1000,main_2016_2023,lad,,54312,,ok,pooled OLS
+M0_msoa,log_median_ppsqm ~ newbuilds_lag1_per_1000,main_2016_2023,msoa,,54312,,ok,pooled OLS
+M1_lad,log_median_ppsqm ~ newbuilds_lag1_per_1000 | year,main_2016_2023,lad,,54312,0.00590034346360746,ok,year FE
+M1_msoa,log_median_ppsqm ~ newbuilds_lag1_per_1000 | year,main_2016_2023,msoa,,54312,0.00590034346360746,ok,year FE
+M2_lad,log_median_ppsqm ~ newbuilds_lag1_per_1000 | msoa11cd,main_2016_2023,lad,,54312,2.498159855313098e-06,ok,MSOA FE
+M2_msoa,log_median_ppsqm ~ newbuilds_lag1_per_1000 | msoa11cd,main_2016_2023,msoa,,54312,2.498159855313098e-06,ok,MSOA FE
+M3_lad,log_median_ppsqm ~ newbuilds_lag1_per_1000 | msoa11cd + year,main_2016_2023,lad,,54312,0.00012137092929842552,ok,MSOA + year FE
+M3_msoa,log_median_ppsqm ~ newbuilds_lag1_per_1000 | msoa11cd + year,main_2016_2023,msoa,,54312,0.00012137092929842552,ok,MSOA + year FE
+M4_lad,log_median_ppsqm ~ newbuilds_lag1_per_1000 | lad23cd_analysis + year,main_2016_2023,lad,,54312,0.0022580533100519107,ok,LAD + year FE
+M4_msoa,log_median_ppsqm ~ newbuilds_lag1_per_1000 | lad23cd_analysis + year,main_2016_2023,msoa,,54312,0.0022580533100519107,ok,LAD + year FE
+M5_lad,log_median_ppsqm ~ newbuilds_lag1_per_1000 | msoa11cd + region_year,main_2016_2023,lad,,54312,1.1331836423655872e-06,ok,MSOA + region x year FE
+M5_msoa,log_median_ppsqm ~ newbuilds_lag1_per_1000 | msoa11cd + region_year,main_2016_2023,msoa,,54312,1.1331836423655872e-06,ok,MSOA + region x year FE
+M6_lad,log_median_ppsqm ~ newbuilds_lag1_per_1000 | msoa11cd + lad_year,main_2016_2023,lad,,54312,6.1126918646792205e-06,ok,MSOA + LAD x year FE
+M6_msoa,log_median_ppsqm ~ newbuilds_lag1_per_1000 | msoa11cd + lad_year,main_2016_2023,msoa,,54312,6.1126918646792205e-06,ok,MSOA + LAD x year FE
+M2_year_dummies_wald,log_median_ppsqm ~ newbuilds_lag1_per_1000 + i(year) | msoa11cd,main_2016_2023,lad,,54312,0.7612176716321002,ok,cluster-robust test of year effects
+mundlak_year,log_median_ppsqm ~ newbuilds_lag1_per_1000 + x_msoa_mean | year,main_2016_2023,lad,,54312,0.01086692033035419,ok,Mundlak / CRE test
+wooldridge_first_difference,dy ~ dx | year,main_2016_2023,msoa,,47523,3.88796777871514e-05,ok,first-difference residuals for serial correlation
+"M3_robust_main sample, lag 1 (baseline)",log_median_ppsqm ~ newbuilds_lag1_per_1000 | msoa11cd + year,"main sample, lag 1 (baseline)",lad,,54312,0.00012137092929842552,ok,"main sample, lag 1 (baseline)"
+"M6_robust_main sample, lag 1 (baseline)",log_median_ppsqm ~ newbuilds_lag1_per_1000 | msoa11cd + lad_year,"main sample, lag 1 (baseline)",lad,,54312,6.1126918646792205e-06,ok,"main sample, lag 1 (baseline)"
+"M3_robust_full panel 2012-2023, lag 1",log_median_ppsqm ~ newbuilds_lag1_per_1000 | msoa11cd + year,"full panel 2012-2023, lag 1",lad,,81468,2.9012074532319687e-05,ok,"full panel 2012-2023, lag 1"
+"M6_robust_full panel 2012-2023, lag 1",log_median_ppsqm ~ newbuilds_lag1_per_1000 | msoa11cd + lad_year,"full panel 2012-2023, lag 1",lad,,81468,9.816576393684162e-05,ok,"full panel 2012-2023, lag 1"
+M3_robust_same-year construction,log_median_ppsqm ~ newbuilds_per_1000 | msoa11cd + year,same-year construction,lad,,54312,0.0004379955063968932,ok,same-year construction
+M6_robust_same-year construction,log_median_ppsqm ~ newbuilds_per_1000 | msoa11cd + lad_year,same-year construction,lad,,54312,2.771573835425034e-05,ok,same-year construction
+M3_robust_lag 2,log_median_ppsqm ~ newbuilds_lag2_per_1000 | msoa11cd + year,lag 2,lad,,54312,8.567547557736255e-06,ok,lag 2
+M6_robust_lag 2,log_median_ppsqm ~ newbuilds_lag2_per_1000 | msoa11cd + lad_year,lag 2,lad,,54312,4.462001357286027e-08,ok,lag 2
+M3_robust_lag 3,log_median_ppsqm ~ newbuilds_lag3_per_1000 | msoa11cd + year,lag 3,lad,,54312,1.0046988277778723e-05,ok,lag 3
+M6_robust_lag 3,log_median_ppsqm ~ newbuilds_lag3_per_1000 | msoa11cd + lad_year,lag 3,lad,,54312,6.335277502822478e-06,ok,lag 3
+M3_robust_previous 3 years total,log_median_ppsqm ~ newbuilds_prev3yr_per_1000 | msoa11cd + year,previous 3 years total,lad,,54312,6.620262507084362e-06,ok,previous 3 years total
+M6_robust_previous 3 years total,log_median_ppsqm ~ newbuilds_prev3yr_per_1000 | msoa11cd + lad_year,previous 3 years total,lad,,54312,5.736772247022515e-06,ok,previous 3 years total
+M3_robust_log(1 + x),log_median_ppsqm ~ x_log1p | msoa11cd + year,log(1 + x),lad,,54312,0.00040536352617681626,ok,log(1 + x)
+M6_robust_log(1 + x),log_median_ppsqm ~ x_log1p | msoa11cd + lad_year,log(1 + x),lad,,54312,6.524723760792384e-05,ok,log(1 + x)
+M3_robust_winsorised at p99,log_median_ppsqm ~ x_wins99 | msoa11cd + year,winsorised at p99,lad,,54312,0.00024173460826049098,ok,winsorised at p99
+M6_robust_winsorised at p99,log_median_ppsqm ~ x_wins99 | msoa11cd + lad_year,winsorised at p99,lad,,54312,4.157035120355701e-05,ok,winsorised at p99
+M3_robust_trimmed above p99.9,log_median_ppsqm ~ newbuilds_lag1_per_1000 | msoa11cd + year,trimmed above p99.9,lad,,54257,0.00019271399963405322,ok,trimmed above p99.9
+M6_robust_trimmed above p99.9,log_median_ppsqm ~ newbuilds_lag1_per_1000 | msoa11cd + lad_year,trimmed above p99.9,lad,,54257,3.5869219741191394e-05,ok,trimmed above p99.9

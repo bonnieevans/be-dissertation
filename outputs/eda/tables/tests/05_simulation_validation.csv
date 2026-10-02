@@ -1,0 +1,7 @@
+DGP,N,T_obs,HT_rejection_rate_5pct,HT_trend_rejection_rate_5pct (series has drift),Hadri_rejection_rate_5pct
+iid noise (rho=0),2000,12,1.0,1.0,0.05
+AR(0.5),2000,12,1.0,1.0,1.0
+random walk (rho=1),2000,12,0.04,0.056666666666666664,1.0
+iid noise (rho=0),2000,8,1.0,1.0,0.04666666666666667
+AR(0.5),2000,8,1.0,1.0,1.0
+random walk (rho=1),2000,8,0.04666666666666667,0.06,1.0

@@ -1,0 +1,6 @@
+test,F,df1,df2,p
+year effects (M2 -> M3),21639.037896237518,7,47515.0,1.1102230246251565e-16
+MSOA effects beyond LAD effects (M4 -> M3),74.12501874373388,6495,47515.0,1.1102230246251565e-16
+LAD x year effects beyond year effects (M3 -> M6),20.395659619749583,2051,45464.0,1.1102230246251565e-16
+region x year effects beyond year effects (M3 -> M5),417.06890653714896,56,47459.0,1.1102230246251565e-16
+"year effects, cluster-robust Wald (LAD)",1058.0626886203138,7,,1.1102230246251565e-16

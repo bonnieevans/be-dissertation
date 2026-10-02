@@ -1,7 +1,7 @@
 duckdb>=1.2
 polars>=1.9
 pyarrow>=19.0
-pandas>=2.2
+pandas>=2.2,<3  # pandas 3 string dtype is not supported by DuckDB 1.2
 openpyxl>=3.1
 xlsxwriter>=3.2
 xlrd>=2.0
@@ -14,3 +14,7 @@ seaborn>=0.13
 geopandas>=1.0
 statsmodels>=0.14
 pytest>=8.3
+linearmodels>=6.1
+pyfixest>=0.30
+esda>=2.6
+libpysal>=4.12
