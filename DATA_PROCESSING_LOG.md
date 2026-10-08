@@ -40,7 +40,11 @@ year/category rules live in `config/config.yaml`.
    34,753 distinct LSOA11s).
 8. **Census 2011 via Nomis API** (geography type 297 = MSOA11): QS405EW
    (tenure), QS102EW (population/area), QS501EW (qualifications), QS601EW
-   (economic activity).
+   (economic activity). **KS102EW** (age structure) was supplied as a Nomis
+   export (`data/raw/census2011/agestructure_ks102ew.xlsx`; 16 age bands plus total).
+   **Accessibility (added 2026-10-08):** DfT *Journey Time Statistics: access to
+   services 2014* LSOA11 tables JTS0501-0508; MHCLG *English Town Centres 2004*
+   polygons (WFS); ONS MSOA11 population-weighted centroids.
 9. **ONS CPIH index** (series L522, 2015=100), monthly.
 10. **ONS LAD names and codes, Dec 2024**: labels only.
 11. **ONS MSOA21 super-generalised boundaries (England)**: map figures only.
@@ -207,7 +211,50 @@ England MSOA11s with 0% missing.
 5. **Optional.** `degree_share_2011` = Level 4+ / residents 16+;
    `unemployment_rate_2011` = unemployed / economically active, each with a z
    score and quartile.
-6. All z-scores and quartiles use the England-only distribution. Income z,
+6. **Age structure (KS102EW, added 2026-10-08).** The 16 Nomis age bands are grouped
+   into five non-overlapping groups (under 16, 16-24, 25-44, 45-64, 65 and over)
+   and expressed as shares of all usual residents
+   (`age_share_*_2011`) with England-only z-scores (`age_share_*_z`). Hard checks:
+   6,791 unique England MSOA11s; the bands sum to the total in every MSOA11; the
+   total equals the QS102EW population exactly (0 differences); the five shares
+   sum to 1. The five shares are collinear by construction, so at most four can
+   enter a regression together. No quartile columns were created for age.
+   Script: `src/11b_prepare_census2011_age.py`.
+7. **Accessibility (added 2026-10-08), baseline 2014 / 2004.** Script
+   `src/11c_prepare_accessibility.py`; diagnostics `src/15c_accessibility_diagnostics.py`
+   and `outputs/qa/accessibility/ACCESSIBILITY_REPORT.md`. Higher = less accessible
+   throughout.
+   1. *DfT times.* The eight LSOA11 tables give modelled minutes to the nearest
+      employment centre (500-4,999 jobs, DfT's key-services definition), primary
+      school, secondary school, further education, GP, hospital, food store and
+      town centre, by public transport/walk (`..._pt_...`) and car (`..._car_...`);
+      AM peak (Tuesday in October, 7-10am for public transport); capped at 120
+      minutes (under 0.5% of LSOAs reach the cap, only for hospitals). Real column
+      headers were printed and mapped in `config.yaml`. Quirks handled: the food
+      store table (`jts0507`) carries "Town" in its column headers (a DfT labelling
+      error; identified by its title and its values differ from the town-centre
+      table); `jts0502` has one exact duplicate LSOA row (dropped, asserted
+      identical); 2 and 5 LSOAs have no children aged 5-10 / 11-15 and get zero weight.
+   2. *Aggregation.* Population-weighted means of LSOA minutes (never ranks), weights =
+      each table's own service-user population (economically active 16-74 for
+      employment, ages 5-10 / 11-15 / 16-19 for schools and FE, households for GP,
+      hospital, food stores, town centres). LSOA11 nests in MSOA11, so no crosswalk.
+      Asserted: 32,844 LSOA11s in every table, each in exactly one of 6,791 MSOA11s,
+      no missing values, times within 0-120, independent recomputation agrees.
+   3. *Composite.* `access_keyservices_{pt,car}_min_2014` = equal-weighted mean of
+      the eight MSOA-level service times (DfT's key-services average, which DfT
+      publishes only above LSOA level). England working-age-weighted average from
+      these tables: 16.9 min (public transport/walk) and 10.6 min (car), matching
+      DfT's published 2014 figures of about 17 and 10.
+   4. *Distance.* `dist_town_centre_km` = straight-line km from the MSOA11
+      population-weighted centroid to the nearest 2004 town-centre polygon (0 if
+      inside), British National Grid. 1,232 polygons were downloaded; DfT cites
+      1,211 town centres (not reconciled). `dist_town_centre_centroid_km` (to the
+      polygon centroid) is a sensitivity variable (correlation 0.998).
+   5. *Transforms.* z-scores and logs only for the three headline measures
+      (the two composites and the distance); the individual service times have no
+      z-score columns (they can be computed at regression time).
+8. All z-scores and quartiles use the England-only distribution. Income z,
    quartile and the two income flags now follow the `income_moderator` switch
    (default SAIE, unchanged values).
 
@@ -234,8 +281,8 @@ England MSOA11s with 0% missing.
    non-England row, `baseline_households_2011 ≤ 0`, any baseline value varying
    across years within an MSOA. All passed.
 5. **Outputs** in `data/processed/`:
-   - `final_msoa_year_dissertation_panel.parquet` + `.csv` (81,492 × 87; was 78),
-   - `msoa_baseline_characteristics.parquet` + `.csv` (6,791 × 49; was 27),
+   - `final_msoa_year_dissertation_panel.parquet` + `.csv` (81,492 × 123; was 97 before accessibility, 87 before age, 78 before the IMD revision),
+   - `msoa_baseline_characteristics.parquet` + `.csv` (6,791 × 85; was 59 before accessibility, 49 before age, 27 before the IMD revision),
    - `transactions_regression_ready.parquet` (8.1M rows, parquet only),
    - `transactions_analysis.parquet` and `newbuilds_analysis.parquet` (fuller
      detail).
@@ -339,3 +386,28 @@ Full results: `outputs/eda/EDA_REPORT.md` and `outputs/models/MODEL_LAB_REPORT.m
    in 2022); leads that reach 2023 are analysed in a separate sample (`m04`).
 9. **Notes written:** `docs/geography_justification.md` (draft, for editing) and `docs/iv_literature_note.md` (citations
    written from memory; to be verified).
+
+## K. Accessibility: what the diagnostics show (2026-10-08)
+
+Full tables: `outputs/qa/accessibility/ACCESSIBILITY_REPORT.md`.
+
+1. **The composite is a reasonable summary, not a perfect one.** Each of the eight
+   public-transport service times correlates 0.73-0.85 (Pearson) with the key-services
+   composite. PC1 of the eight times explains 69% of the variance (public transport/walk)
+   and 50% (car); PC1 correlates 0.98 / 0.95 with the composite.
+2. **Public transport and car agree closely in ranking** (composite Spearman 0.95, Pearson
+   0.88), but car times are much less spread out (mean 10.7 vs 17.2 minutes).
+3. **Distance to town centre is related but distinct.** It correlates 0.70 (Pearson) and 0.64
+   (Spearman) with the public-transport composite, 0.75 / 0.63 with the car composite, and
+   0.85-0.89 with DfT's own travel time to the town centre.
+4. **Strong overlap with density.** The composites correlate -0.82 (public transport) and -0.74
+   (car) with log population density, and distance -0.63 (denser = more accessible). Overlap
+   with income is about zero (0.02 to 0.08) and with deprivation -0.2 to -0.4. Collinearity
+   with the density moderator should be checked before both enter a regression.
+5. **Extreme values.** The Isles of Scilly (E02006781) is a large outlier (composite 85.7 min
+   by public transport; z above 20 for raw variables). Distances and times are right-skewed
+   (skew 2.3-5.2), so log versions are provided.
+6. **Not included:** airport/rail-station connectivity (no confirmed 2015 tables), cycle times
+   (in the DfT tables, not extracted), and a 2015 baseline (2014 is the earliest confirmed
+   year; 2014 and 2015-2016 employment data are not strictly comparable).
+

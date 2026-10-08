@@ -42,10 +42,13 @@ Scripts run in numeric order from `src/`, each writing its own log to
 | `09_prepare_census2011_density.py` | Census 2011 QS102EW population density |
 | `10_prepare_census2011_education.py` | Census 2011 QS501EW degree share (optional) |
 | `11_prepare_census2011_unemployment.py` | Census 2011 QS601EW unemployment rate (optional) |
+| `11b_prepare_census2011_age.py` | Census 2011 KS102EW age structure: five age-group shares and z-scores |
+| `11c_prepare_accessibility.py` | DfT Journey Time Statistics 2014 (8 services x public transport/car), key-services composites, straight-line distance to the nearest 2004 town centre |
 | `12_build_msoa_price_panel.py` | MSOA11 x year price outcomes |
 | `13_build_msoa_newbuild_panel.py` | MSOA11 x year new-build counts + lags (tenure-agnostic) |
 | `14_merge_final_panel.py` | final panel + baseline table + transaction-level robustness file |
 | `15_run_diagnostics.py` | correlation matrix + VIF (interactions computed on the fly) |
+| `15c_accessibility_diagnostics.py` | accessibility representativeness: correlations, PCA, public transport vs car, overlap with moderators, maps (`outputs/qa/accessibility/`) |
 | `15b_imd_revision_diagnostics.py` | IMD revision: Pearson/Spearman table, scatter, VIFs under two moderator pairings, quartile movement, `IMD_REVISION_REPORT.md` |
 | `16_investigate_unknown_tenure.py` | standalone QA deep-dive (unaffected by Phase 2) |
 | `17_quality_assurance.py` | data_quality/geography_match/transaction_count summaries |
@@ -59,15 +62,15 @@ for f in 00_check_environment 01_inventory_ucl_files 02_clean_transactions \
          03_clean_epc 04_construct_newbuilds 05_attach_geography \
          06_prepare_income 07_prepare_imd2015 08_prepare_census2011_tenure \
          09_prepare_census2011_density 10_prepare_census2011_education \
-         11_prepare_census2011_unemployment 12_build_msoa_price_panel \
+         11_prepare_census2011_unemployment 11b_prepare_census2011_age 11c_prepare_accessibility 12_build_msoa_price_panel \
          13_build_msoa_newbuild_panel 14_merge_final_panel 15_run_diagnostics \
-         15b_imd_revision_diagnostics \
+         15b_imd_revision_diagnostics 15c_accessibility_diagnostics \
          17_quality_assurance 18_summary_statistics 19_make_figures 20_export_excel; do
     python3 "${f}.py" || break
 done
 ```
 
-Run tests with `pytest tests/` (46 tests: price calculation, geography
+Run tests with `pytest tests/` (53 tests: price calculation, geography
 joins, new-build dedup, IMD transform / reproduction of the published IMD /
 population weighting / moderator switches, income-duplication QA, panel unit-root /
 cross-section-dependence tests, within transformation, wild-cluster bootstrap).
@@ -160,9 +163,9 @@ also all it uses them for.
 ## Final outputs (`data/processed/`)
 
 - `final_msoa_year_dissertation_panel.parquet` + `.csv` - one row per
-  `msoa11cd x year`, 81,492 rows, 87 columns, zero duplicate keys, 0%
+  `msoa11cd x year`, 81,492 rows, 123 columns, zero duplicate keys, 0%
   missingness on baseline characteristics.
-- `msoa_baseline_characteristics.parquet` + `.csv` - one row per MSOA11 (49 columns).
+- `msoa_baseline_characteristics.parquet` + `.csv` - one row per MSOA11 (85 columns).
 - `transactions_regression_ready.parquet` - transaction-level robustness
   file (parquet-only, 8.1M rows).
 - `transactions_analysis.parquet`, `newbuilds_analysis.parquet` - fuller

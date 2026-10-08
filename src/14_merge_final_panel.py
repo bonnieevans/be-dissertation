@@ -52,6 +52,8 @@ REQUIRED_FILES = [
     "msoa11_census2011_density.parquet",
     "msoa11_census2011_education.parquet",
     "msoa11_census2011_unemployment.parquet",
+    "msoa11_census2011_age.parquet",
+    "msoa11_accessibility2014.parquet",
 ]
 
 
@@ -94,6 +96,8 @@ def main() -> int:
         ("density_v", "msoa11_census2011_density.parquet"),
         ("education_v", "msoa11_census2011_education.parquet"),
         ("unemployment_v", "msoa11_census2011_unemployment.parquet"),
+        ("age_v", "msoa11_census2011_age.parquet"),
+        ("access_v", "msoa11_accessibility2014.parquet"),
     ]:
         con.execute(f"CREATE OR REPLACE VIEW {view} AS SELECT * FROM read_parquet('{(GEO_DIR / fname).as_posix()}')")
 
@@ -183,6 +187,38 @@ def main() -> int:
 
             un.unemployment_rate_2011, un.unemployment_z, un.unemployment_quartile,
 
+            ag.age_share_under16_2011, ag.age_share_16_24_2011, ag.age_share_25_44_2011,
+            ag.age_share_45_64_2011, ag.age_share_65plus_2011,
+            ag.age_share_under16_z, ag.age_share_16_24_z, ag.age_share_25_44_z,
+            ag.age_share_45_64_z, ag.age_share_65plus_z,
+
+            ac.access_employment_pt_min_2014,
+            ac.access_employment_car_min_2014,
+            ac.access_primary_school_pt_min_2014,
+            ac.access_primary_school_car_min_2014,
+            ac.access_secondary_school_pt_min_2014,
+            ac.access_secondary_school_car_min_2014,
+            ac.access_further_education_pt_min_2014,
+            ac.access_further_education_car_min_2014,
+            ac.access_gp_pt_min_2014,
+            ac.access_gp_car_min_2014,
+            ac.access_hospital_pt_min_2014,
+            ac.access_hospital_car_min_2014,
+            ac.access_food_store_pt_min_2014,
+            ac.access_food_store_car_min_2014,
+            ac.access_town_centre_pt_min_2014,
+            ac.access_town_centre_car_min_2014,
+            ac.access_keyservices_pt_min_2014,
+            ac.access_keyservices_car_min_2014,
+            ac.dist_town_centre_km,
+            ac.dist_town_centre_centroid_km,
+            ac.access_keyservices_pt_z,
+            ac.access_keyservices_car_z,
+            ac.dist_town_centre_z,
+            ac.log_access_keyservices_pt_min_2014,
+            ac.log_access_keyservices_car_min_2014,
+            ac.log_dist_town_centre_km,
+
             (p.sale_count IS NOT NULL AND inc.baseline_income_bhc_2011_12 IS NOT NULL
                 AND imd.imd_ex_housing IS NOT NULL AND tn.social_rent_share_2011 IS NOT NULL
                 AND dn.population_density_2011 IS NOT NULL) AS baseline_complete
@@ -199,6 +235,8 @@ def main() -> int:
         LEFT JOIN density_v dn ON nb.msoa11cd = dn.msoa11cd
         LEFT JOIN education_v ed ON nb.msoa11cd = ed.msoa11cd
         LEFT JOIN unemployment_v un ON nb.msoa11cd = un.msoa11cd
+        LEFT JOIN age_v ag ON nb.msoa11cd = ag.msoa11cd
+        LEFT JOIN access_v ac ON nb.msoa11cd = ac.msoa11cd
         """
     )
     con.execute(
@@ -244,10 +282,13 @@ def main() -> int:
                    count(DISTINCT deprivation_quartile) AS n_dep_q,
                    count(DISTINCT income_z) AS n_inc_z,
                    count(DISTINCT social_rent_share_2011) AS n_tenure,
-                   count(DISTINCT population_density_2011) AS n_density
+                   count(DISTINCT population_density_2011) AS n_density,
+                   count(DISTINCT age_share_65plus_2011) AS n_age65, count(DISTINCT age_share_25_44_2011) AS n_age2544,
+                   count(DISTINCT access_keyservices_pt_min_2014) AS n_acc_pt, count(DISTINCT access_keyservices_car_min_2014) AS n_acc_car,
+                   count(DISTINCT dist_town_centre_km) AS n_dist
             FROM panel GROUP BY msoa11cd
             HAVING n_income > 1 OR n_imd > 1 OR n_imd_inc > 1 OR n_dep_z > 1 OR n_dep_q > 1
-                   OR n_inc_z > 1 OR n_tenure > 1 OR n_density > 1
+                   OR n_inc_z > 1 OR n_tenure > 1 OR n_density > 1 OR n_age65 > 1 OR n_age2544 > 1 OR n_acc_pt > 1 OR n_acc_car > 1 OR n_dist > 1
         )
         """
     ).fetchone()[0]
@@ -271,6 +312,8 @@ def main() -> int:
             sum(CASE WHEN population_density_2011 IS NULL THEN 1 ELSE 0 END)::DOUBLE / count(*) AS pct_missing_density,
             sum(CASE WHEN degree_share_2011 IS NULL THEN 1 ELSE 0 END)::DOUBLE / count(*) AS pct_missing_education,
             sum(CASE WHEN unemployment_rate_2011 IS NULL THEN 1 ELSE 0 END)::DOUBLE / count(*) AS pct_missing_unemployment,
+            sum(CASE WHEN age_share_65plus_2011 IS NULL THEN 1 ELSE 0 END)::DOUBLE / count(*) AS pct_missing_age_structure,
+            sum(CASE WHEN access_keyservices_pt_min_2014 IS NULL OR dist_town_centre_km IS NULL THEN 1 ELSE 0 END)::DOUBLE / count(*) AS pct_missing_accessibility,
             sum(CASE WHEN sale_count IS NULL THEN 1 ELSE 0 END)::DOUBLE / count(*) AS pct_missing_any_sales,
             sum(CASE WHEN lad23cd_analysis IS NULL THEN 1 ELSE 0 END)::DOUBLE / count(*) AS pct_missing_lad
         FROM panel
@@ -314,7 +357,37 @@ def main() -> int:
             tn.social_rent_share_2011, tn.owner_share_2011, tn.private_rent_share_2011, tn.social_rent_z,
             dn.population_density_2011, dn.log_population_density_2011, dn.density_z,
             ed.degree_share_2011, ed.degree_share_z,
-            un.unemployment_rate_2011, un.unemployment_z
+            un.unemployment_rate_2011, un.unemployment_z,
+            ag.age_share_under16_2011, ag.age_share_16_24_2011, ag.age_share_25_44_2011,
+            ag.age_share_45_64_2011, ag.age_share_65plus_2011,
+            ag.age_share_under16_z, ag.age_share_16_24_z, ag.age_share_25_44_z,
+            ag.age_share_45_64_z, ag.age_share_65plus_z,
+            ac.access_employment_pt_min_2014,
+            ac.access_employment_car_min_2014,
+            ac.access_primary_school_pt_min_2014,
+            ac.access_primary_school_car_min_2014,
+            ac.access_secondary_school_pt_min_2014,
+            ac.access_secondary_school_car_min_2014,
+            ac.access_further_education_pt_min_2014,
+            ac.access_further_education_car_min_2014,
+            ac.access_gp_pt_min_2014,
+            ac.access_gp_car_min_2014,
+            ac.access_hospital_pt_min_2014,
+            ac.access_hospital_car_min_2014,
+            ac.access_food_store_pt_min_2014,
+            ac.access_food_store_car_min_2014,
+            ac.access_town_centre_pt_min_2014,
+            ac.access_town_centre_car_min_2014,
+            ac.access_keyservices_pt_min_2014,
+            ac.access_keyservices_car_min_2014,
+            ac.dist_town_centre_km,
+            ac.dist_town_centre_centroid_km,
+            ac.access_keyservices_pt_z,
+            ac.access_keyservices_car_z,
+            ac.dist_town_centre_z,
+            ac.log_access_keyservices_pt_min_2014,
+            ac.log_access_keyservices_car_min_2014,
+            ac.log_dist_town_centre_km
         FROM geog_v g
         LEFT JOIN msoa11_names mn ON g.msoa11cd = mn.msoa11cd
         LEFT JOIN lad_names ln ON g.lad23cd_analysis = ln.lad_code
@@ -325,6 +398,8 @@ def main() -> int:
         LEFT JOIN density_v dn ON g.msoa11cd = dn.msoa11cd
         LEFT JOIN education_v ed ON g.msoa11cd = ed.msoa11cd
         LEFT JOIN unemployment_v un ON g.msoa11cd = un.msoa11cd
+        LEFT JOIN age_v ag ON g.msoa11cd = ag.msoa11cd
+        LEFT JOIN access_v ac ON g.msoa11cd = ac.msoa11cd
         """
     )
     baseline_df = con.sql("SELECT * FROM baseline_characteristics ORDER BY msoa11cd").df()

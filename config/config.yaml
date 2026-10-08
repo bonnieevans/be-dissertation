@@ -114,6 +114,33 @@ imd2015:
   # check on the transform; reported, not a hard stop.
   file9_xlsx: data/raw/imd/imd2015/File_9_ID2015_transformed_domain_scores.xlsx
 
+# Baseline accessibility (DfT Journey Time Statistics 2014, LSOA11 tables JTS0501-0508).
+# Travel time = modelled minutes to the NEAREST destination of that type, AM peak (Tuesday in
+# October, 7-10am for public transport), capped at 120 (journey cannot be made within 2 hours).
+# Column names are the real DfT headers (printed and checked in 11c_prepare_accessibility.py).
+# NOTE: jts0507 (food stores) carries the header prefix "Town" - a labelling error in the DfT file;
+# it is identified by the table title, not the header prefix.
+accessibility:
+  year: 2014
+  expected_n_lsoa: 32844
+  expected_n_msoa11: 6791
+  time_cap_minutes: 120
+  data_dir: data/raw/transport/jts2014/extracted
+  modes:
+    pt:  PTt     # public transport / walk
+    car: Cart
+  services:
+    employment:        {file: jts0501.xls, title_contains: "employment centres", prefix: "500Emp", pop: Empl_pop, users: "economically active 16-74"}   # centres with 500-4,999 jobs (DfT key-services definition)
+    primary_school:    {file: jts0502.xls, title_contains: "Primary Schools",    prefix: PS,     pop: PS_pop,    users: "population aged 5-10"}
+    secondary_school:  {file: jts0503.xls, title_contains: "Secondary Schools",  prefix: SS,     pop: SS_pop,    users: "population aged 11-15"}
+    further_education: {file: jts0504.xls, title_contains: "further education",  prefix: FE,     pop: FE_pop,    users: "population aged 16-19"}
+    gp:                {file: jts0505.xls, title_contains: "GPs",                prefix: GP,     pop: GP_pop,    users: "all households"}
+    hospital:          {file: jts0506.xls, title_contains: "hospitals",          prefix: Hosp,   pop: Hosp_pop,  users: "all households"}
+    food_store:        {file: jts0507.xls, title_contains: "food stores",        prefix: Town,   pop: Town_pop,  users: "all households"}   # header prefix is mislabelled "Town"
+    town_centre:       {file: jts0508.xls, title_contains: "town centres",       prefix: Town,   pop: Town_pop,  users: "all households"}
+  town_centres_geojson: data/raw/landuse_access/town_centres_2004/English_Town_Centres_2004.geojson
+  msoa11_pwc_geojson: data/raw/geography/msoa11_pwc/MSOA11_PWC_England_BNG.geojson
+
 lagged_exposure:
   lags_years: [1, 2, 3]
   primary_treatment: newbuilds_lag1_per_1000       # PRIMARY treatment

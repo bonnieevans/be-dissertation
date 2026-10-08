@@ -110,6 +110,10 @@ def main() -> int:
         ("census2011_density", "population_density_2011"),
         ("census2011_education", "degree_share_2011"),
         ("census2011_unemployment", "unemployment_rate_2011"),
+        ("census2011_age_structure", "age_share_65plus_2011"),
+        ("accessibility_keyservices_pt_2014", "access_keyservices_pt_min_2014"),
+        ("accessibility_keyservices_car_2014", "access_keyservices_car_min_2014"),
+        ("dist_town_centre_km", "dist_town_centre_km"),
     ]:
         row = con.sql(
             f"""
