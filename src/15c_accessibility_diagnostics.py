@@ -44,6 +44,9 @@ def md(df: pd.DataFrame, nd: int = 3) -> str:
 def main() -> int:
     OUT.mkdir(parents=True, exist_ok=True)
     b = pd.read_parquet(BASE)
+    full = pd.read_parquet(PROJECT_ROOT / "data" / "interim" / "geography_crosswalks" / "msoa11_accessibility2014.parquet")
+    extra = [c for c in full.columns if c not in b.columns]
+    b = b.merge(full[["msoa11cd"] + extra], on="msoa11cd", how="left")     # individual services live in the interim table only
     pt = {s: f"access_{s}_pt_min_2014" for s in SVCS}
     car = {s: f"access_{s}_car_min_2014" for s in SVCS}
     comp = ["access_keyservices_pt_min_2014", "access_keyservices_car_min_2014", "dist_town_centre_km", "dist_town_centre_centroid_km"]

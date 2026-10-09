@@ -34,7 +34,7 @@ SUMMARY_VARS = [
     "social_rent_share_2011", "population_density_2011", "log_population_density_2011",
     "degree_share_2011", "unemployment_rate_2011",
     "age_share_under16_2011", "age_share_16_24_2011", "age_share_25_44_2011", "age_share_45_64_2011", "age_share_65plus_2011",
-    "access_keyservices_pt_min_2014", "access_keyservices_car_min_2014", "dist_town_centre_km",
+    "access_keyservices_pt_min_2014", "access_keyservices_car_min_2014", "dist_town_centre_km", "greenbelt_share_2011",
     "detached_sale_share", "flat_sale_share", "leasehold_sale_share",
 ]
 

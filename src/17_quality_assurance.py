@@ -114,6 +114,7 @@ def main() -> int:
         ("accessibility_keyservices_pt_2014", "access_keyservices_pt_min_2014"),
         ("accessibility_keyservices_car_2014", "access_keyservices_car_min_2014"),
         ("dist_town_centre_km", "dist_town_centre_km"),
+        ("greenbelt_share_2011", "greenbelt_share_2011"),
     ]:
         row = con.sql(
             f"""

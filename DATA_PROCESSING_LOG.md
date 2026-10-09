@@ -251,9 +251,11 @@ England MSOA11s with 0% missing.
       inside), British National Grid. 1,232 polygons were downloaded; DfT cites
       1,211 town centres (not reconciled). `dist_town_centre_centroid_km` (to the
       polygon centroid) is a sensitivity variable (correlation 0.998).
-   5. *Transforms.* z-scores and logs only for the three headline measures
-      (the two composites and the distance); the individual service times have no
-      z-score columns (they can be computed at regression time).
+   5. *Transforms and what is kept.* z-scores and logs only for the three headline measures
+      (the two composites and the distance). From 2026-10-09 the final panel and baseline
+      table carry ONLY the composites, the distance and their z-scores/logs (9 columns); the
+      16 individual service times and the centroid-distance sensitivity variable stay in the interim table
+      `msoa11_accessibility2014.parquet` and are used by the diagnostics only.
 8. All z-scores and quartiles use the England-only distribution. Income z,
    quartile and the two income flags now follow the `income_moderator` switch
    (default SAIE, unchanged values).
@@ -281,8 +283,8 @@ England MSOA11s with 0% missing.
    non-England row, `baseline_households_2011 ≤ 0`, any baseline value varying
    across years within an MSOA. All passed.
 5. **Outputs** in `data/processed/`:
-   - `final_msoa_year_dissertation_panel.parquet` + `.csv` (81,492 × 123; was 97 before accessibility, 87 before age, 78 before the IMD revision),
-   - `msoa_baseline_characteristics.parquet` + `.csv` (6,791 × 85; was 59 before accessibility, 49 before age, 27 before the IMD revision),
+   - `final_msoa_year_dissertation_panel.parquet` + `.csv` (81,492 × 109; was 97 before accessibility and green belt, 87 before age, 78 before the IMD revision),
+   - `msoa_baseline_characteristics.parquet` + `.csv` (6,791 × 71; was 59 before accessibility and green belt, 49 before age, 27 before the IMD revision),
    - `transactions_regression_ready.parquet` (8.1M rows, parquet only),
    - `transactions_analysis.parquet` and `newbuilds_analysis.parquet` (fuller
      detail).
@@ -382,8 +384,13 @@ Full results: `outputs/eda/EDA_REPORT.md` and `outputs/models/MODEL_LAB_REPORT.m
    (54,312 MSOA-years; 6,789 MSOAs; 294 LADs); standard errors clustered by LAD; a registry of all 192 regressions run.
 7. **Not done, by decision.** The place-based policy registry (Phase 2) is not built, so the funding-control check is not run;
    `m07` documents the algebra for any LAD-year variable.
-8. **Known data limitation for lead terms.** New-build completions in 2023 are incomplete (about 77,000 against about 187,000
-   in 2022); leads that reach 2023 are analysed in a separate sample (`m04`).
+8. **Known data limitation at the end of the sample (corrected 2026-10-09).** New-build counts in the panel are incomplete in
+   2022 and especially 2023 because new-dwelling EPCs increasingly lack a UPRN: missing-UPRN share 1.5-2.9% in 2012-2020, 4.3% in
+   2021, 11.2% in 2022, 51.5% in 2023 and 71.7% in 2024. Against MHCLG Live Table 120 (net additional dwellings, new-build
+   completions, converted from financial to calendar years) the panel is 0.88-1.12 of the official count in 2012-2022 and 0.38 in
+   2023. The raw EPC new-dwelling records are NOT short (0.98 of official in 2023); the loss is the missing UPRN. This replaces the
+   earlier statement that the shortfall was due to lodgement lag. Leads that reach 2023 are analysed in a separate sample (`m04`).
+   Details: `outputs/qa/sample_choice/`.
 9. **Notes written:** `docs/geography_justification.md` (draft, for editing) and `docs/iv_literature_note.md` (citations
    written from memory; to be verified).
 
@@ -410,4 +417,66 @@ Full tables: `outputs/qa/accessibility/ACCESSIBILITY_REPORT.md`.
 6. **Not included:** airport/rail-station connectivity (no confirmed 2015 tables), cycle times
    (in the DfT tables, not extracted), and a 2015 baseline (2014 is the earliest confirmed
    year; 2014 and 2015-2016 employment data are not strictly comparable).
+
+## L. Persistence of the 2011 baseline characteristics (2026-10-09)
+
+Script `src/eda/eda_08_baseline_persistence.py`; report `outputs/eda/persistence/PERSISTENCE_REPORT.md`. Raw 2021 Census tables
+(Nomis TS007A, TS066, TS067, TS006 at MSOA21; ONS TS054 already on disk) are in `data/raw/census2021/` and are used only for this check.
+
+1. **Method.** The 2011 baseline value of each moderator is compared with the same definition built from the 2021 Census, linked by
+   the ONS best-fit MSOA11 to MSOA21 lookup. Sample A = MSOA11s whose code is unchanged and not merged (6,677 of 6,791; code
+   retention does not guarantee identical boundaries); sample B = all 6,791 via best fit (32 MSOA11s sit in 16 merged MSOA21s; 81
+   MSOA21s are not the best fit of any MSOA11). Quartiles are formed within each census year's own England distribution.
+2. **Results (sample A).** Spearman 2011 vs 2021: density 0.997, social-rent share 0.990, degree share 0.966, age 65+ 0.936,
+   age 25-44 0.919, unemployment 0.889, age 45-64 0.843, age 15-24 0.834 (Pearson 0.946), age 0-14 0.874. Same quartile in both
+   censuses: 94% density, 91% social rent, 80% degree, 73% age 65+, 71% age 25-44, 66% unemployment, 64% age 0-14, 61% age 15-24
+   and 45-64. Moves of two or more quartiles are at most 4.3%. Sample B gives almost identical figures.
+3. **Levels moved even where ranks did not** (degree share 27.0% to 33.5%, unemployment 6.4% to 4.7%, age 65+ 16.7% to 19.1%); the model
+   uses England-wide z-scores and quartiles, so rank stability is what matters for the interactions.
+4. **Stability is lower in low-density areas for the age and unemployment variables** (for example age 15-24 Spearman 0.66 in the
+   least dense quartile against 0.82 in the densest).
+5. **Not covered:** income (SAIE FYE2012) and IMD 2015 have no 2021 equivalent in this check; accessibility is not a Census measure.
+   The 2021 Census was taken during COVID-19 restrictions, and economic-activity and qualification definitions differ slightly between censuses.
+
+## M. Accessibility: 2011 series compared with 2014 (2026-10-09)
+
+Scripts `src/11d_prepare_accessibility2011.py` and `src/eda/eda_09_accessibility_2011_vs_2014.py`; report
+`outputs/eda/accessibility/ACCESSIBILITY_2011_VS_2014.md`. The 2011 table (`msoa11_accessibility2011.parquet`) is NOT merged into the panel.
+
+1. **Source.** DfT Accessibility Statistics, LSOA tables ACS0501-0508 for 2011 (older series, 2001 LSOA codes, whole-minute times,
+   car times from 2010 use Trafficmaster speeds). The 2001 LSOAs (32,482) are moved to 2011 LSOAs with the ONS best-fit lookup (units
+   unchanged 31,672 rows, merged 293, split 881, irregular 151) and then to MSOA11. Split or irregular LSOAs share the 2001 LSOA's weight
+   equally among their pieces (2.4% of employment weight). Weights are the tables' own service-user counts (rounded to tens).
+2. **Validation.** The 7-service England averages from these tables are 14.3 minutes (public transport/walk) and 6.0 (car), matching DfT's
+   published 2011 headline (about 14 and 6). Employment centres are defined as LSOAs with at least 500 jobs (2014: 500-4,999).
+3. **Public transport rankings agree reasonably across the two years.** Composite (8 services): Spearman 0.83, Pearson 0.85, 61% in the same
+   quartile, 5% move two or more quartiles; individual services 0.77-0.86 except hospitals (0.59).
+4. **Car rankings agree poorly,** composite Spearman 0.66 (Pearson 0.42), 50% same quartile, 12% move two or more. The 2011 car times have a
+   5-minute floor: 91-98% of MSOAs sit within half a minute of it for employment, GP and primary schools, 70% of MSOAs have a composite below 6, and
+   the series has only 227-926 distinct values per service against 6,244-6,791 for 2014. The 2011 car series therefore cannot rank most
+   areas; Spearman among MSOAs above the floor is 0.58.
+5. **Data artefact in 2011.** Tower Hamlets 025 (E02000888) has a 2011 car time of 120 minutes (the cap) for all eight services; it is not
+   plausible and is left as published. Isles of Scilly is at the cap in 2011 as well.
+6. **Both composites relate to density in the same direction** (public transport -0.72 in 2011, -0.82 in 2014); the 2011 car composite is
+   much weaker (-0.24), consistent with the floor.
+
+## N. Green belt share (added 2026-10-09)
+
+Script `src/11e_prepare_greenbelt.py`; QA in `outputs/qa/greenbelt/`.
+
+1. **Variable.** `greenbelt_share_2011` = area of the MSOA11 inside designated green belt / area of the MSOA11, as at 31 March 2011;
+   `greenbelt_share_z` (England-only unweighted z-score) and `greenbelt_any_2011` (share >= 1%). Fixed baseline, one value per MSOA11.
+2. **Source.** MHCLG England Green Belt polygons for 2010/11 (WFS layer `dclg_inspire:England_Green_Belt_2010_11_WGS84`, as at 31 March 2011),
+   overlaid on the ONS MSOA11 generalised clipped (BGC) boundaries in British National Grid; polygons from different authorities dissolved (overlap
+   0.0001 ha), invalid geometries repaired. 2011/12 and 2014/15 layers were also downloaded for stability checks.
+3. **Checks.** Dissolved national area 1,633,068 ha against MHCLG's published 1,639,530 ha for 2010/11 (-0.4%; the 2011/12 layer is -0.2%);
+   99.99% of the green belt area lies inside the MSOA11 boundaries. 2014/15 layer vs 2010/11: shares correlate 0.9996 (23 MSOAs differ by more than 0.05).
+4. **Data error in the 2011/12 layer.** It shows Guildford (9 MSOAs) and Basildon (4) wholly as green belt (share about 1.0), which neither the 2010/11
+   nor the 2014/15 layer supports; the 2010/11 layer used for the variable is unaffected.
+5. **Distribution.** Mean 0.153; zero for 60.9% of MSOA11s; at least 1% for 34.4%; fully inside (99%+) for 0.4%; median among positive 0.34.
+   Highest regional mean in the East Midlands (0.27) and the North West (0.23); lowest in the South West (0.07) and London (0.08).
+6. **Overlap with other moderators is small:** correlations of -0.22 with log density, -0.22 with deprivation, -0.16 with social rent, +0.13 with income,
+   and +0.07 / +0.08 with the public-transport accessibility composite / distance to town centre.
+7. **Limits.** Generalised boundaries make shares approximate near edges; designation is a snapshot at March 2011 (the national designated area changed by
+   about 0.3% to 2015); green belt status is a planning designation, not land cover.
 

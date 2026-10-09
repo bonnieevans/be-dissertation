@@ -43,6 +43,7 @@ Scripts run in numeric order from `src/`, each writing its own log to
 | `10_prepare_census2011_education.py` | Census 2011 QS501EW degree share (optional) |
 | `11_prepare_census2011_unemployment.py` | Census 2011 QS601EW unemployment rate (optional) |
 | `11b_prepare_census2011_age.py` | Census 2011 KS102EW age structure: five age-group shares and z-scores |
+| `11e_prepare_greenbelt.py` | share of each MSOA11 inside designated green belt as at 31 March 2011 (MHCLG polygons overlaid on MSOA11 boundaries) |
 | `11c_prepare_accessibility.py` | DfT Journey Time Statistics 2014 (8 services x public transport/car), key-services composites, straight-line distance to the nearest 2004 town centre |
 | `12_build_msoa_price_panel.py` | MSOA11 x year price outcomes |
 | `13_build_msoa_newbuild_panel.py` | MSOA11 x year new-build counts + lags (tenure-agnostic) |
@@ -62,7 +63,7 @@ for f in 00_check_environment 01_inventory_ucl_files 02_clean_transactions \
          03_clean_epc 04_construct_newbuilds 05_attach_geography \
          06_prepare_income 07_prepare_imd2015 08_prepare_census2011_tenure \
          09_prepare_census2011_density 10_prepare_census2011_education \
-         11_prepare_census2011_unemployment 11b_prepare_census2011_age 11c_prepare_accessibility 12_build_msoa_price_panel \
+         11_prepare_census2011_unemployment 11b_prepare_census2011_age 11c_prepare_accessibility 11e_prepare_greenbelt 12_build_msoa_price_panel \
          13_build_msoa_newbuild_panel 14_merge_final_panel 15_run_diagnostics \
          15b_imd_revision_diagnostics 15c_accessibility_diagnostics \
          17_quality_assurance 18_summary_statistics 19_make_figures 20_export_excel; do
@@ -70,7 +71,7 @@ for f in 00_check_environment 01_inventory_ucl_files 02_clean_transactions \
 done
 ```
 
-Run tests with `pytest tests/` (53 tests: price calculation, geography
+Run tests with `pytest tests/` (59 tests: price calculation, geography
 joins, new-build dedup, IMD transform / reproduction of the published IMD /
 population weighting / moderator switches, income-duplication QA, panel unit-root /
 cross-section-dependence tests, within transformation, wild-cluster bootstrap).
@@ -91,6 +92,9 @@ Two further layers sit on top of the final panel. Neither writes to `data/proces
 | `eda/eda_05_stationarity_dependence.py` | Harris-Tzavalis, Hadri and Fisher-ADF stationarity tests (implemented and validated by simulation in `panel_tests.py`); Pesaran CD test |
 | `eda/eda_06_spatial.py` | queen-contiguity neighbours, Moran's I by year, LISA maps |
 | `eda/eda_07_report.py` | assembles `EDA_REPORT.md` from the tables |
+| `11d_prepare_accessibility2011.py` | older DfT Accessibility Statistics 2011 (2001 LSOA codes) moved to MSOA11; comparison only, not merged |
+| `eda/eda_09_accessibility_2011_vs_2014.py` | rank agreement between the 2011 and 2014 accessibility series |
+| `eda/eda_08_baseline_persistence.py` | persistence of the 2011 baseline characteristics against the 2021 Census (`outputs/eda/persistence/`) |
 
 **`src/models/`: baseline specification lab** (report: `outputs/models/MODEL_LAB_REPORT.md`; every regression is logged in `outputs/models/tables/spec_registry_ALL.csv`)
 
@@ -163,9 +167,9 @@ also all it uses them for.
 ## Final outputs (`data/processed/`)
 
 - `final_msoa_year_dissertation_panel.parquet` + `.csv` - one row per
-  `msoa11cd x year`, 81,492 rows, 123 columns, zero duplicate keys, 0%
+  `msoa11cd x year`, 81,492 rows, 109 columns, zero duplicate keys, 0%
   missingness on baseline characteristics.
-- `msoa_baseline_characteristics.parquet` + `.csv` - one row per MSOA11 (85 columns).
+- `msoa_baseline_characteristics.parquet` + `.csv` - one row per MSOA11 (71 columns).
 - `transactions_regression_ready.parquet` - transaction-level robustness
   file (parquet-only, 8.1M rows).
 - `transactions_analysis.parquet`, `newbuilds_analysis.parquet` - fuller

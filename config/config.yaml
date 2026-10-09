@@ -141,6 +141,24 @@ accessibility:
   town_centres_geojson: data/raw/landuse_access/town_centres_2004/English_Town_Centres_2004.geojson
   msoa11_pwc_geojson: data/raw/geography/msoa11_pwc/MSOA11_PWC_England_BNG.geojson
 
+# Older DfT Accessibility Statistics 2011 (LSOA tables ACS0501-0508, 2001 LSOA codes). NOT comparable with the 2014
+# series (different software/method; employment centres are LSOAs with >= 500 jobs, i.e. no upper limit).
+# Header names carry a trailing footnote digit (e.g. "Pop_age5to101"), so columns are matched by prefix.
+# Car time uses the "carnew" (Trafficmaster) columns; public transport = "PTtime".
+accessibility_2011:
+  data_dir: data/raw/transport/acs2011/extracted
+  lsoa01_lsoa11_lookup: data/raw/geography/msoa_crosswalks/LSOA01_LSOA11_LAD11_EW_LU.csv
+  expected_n_lsoa01: 32482
+  services:
+    employment:        {file: acs0501-2011.csv, pop_prefix: Empl_pop,       pt_prefix: emplPTtime, car_prefix: emplcarnewtime}
+    primary_school:    {file: acs0502-2011.csv, pop_prefix: Pop_age5to10,   pt_prefix: psPTtime,   car_prefix: pscarnewtime}
+    secondary_school:  {file: acs0503-2011.csv, pop_prefix: Pop_age11to15,  pt_prefix: ssPTtime,   car_prefix: sscarnewtime}
+    further_education: {file: acs0504-2011.csv, pop_prefix: Pop_age16-19,   pt_prefix: fePTtime,   car_prefix: fecarnewtime}
+    gp:                {file: acs0505-2011.csv, pop_prefix: All_households, pt_prefix: gpPTtime,   car_prefix: gpcarnewtime}
+    hospital:          {file: acs0506-2011.csv, pop_prefix: All_households, pt_prefix: hospPTtime, car_prefix: hospcarnewtime}
+    food_store:        {file: acs0507-2011.csv, pop_prefix: All_households, pt_prefix: supPTtime,  car_prefix: supcarnewtime}
+    town_centre:       {file: acs0508-2011.csv, pop_prefix: All_households, pt_prefix: townPTtime, car_prefix: towncarnewtime}
+
 lagged_exposure:
   lags_years: [1, 2, 3]
   primary_treatment: newbuilds_lag1_per_1000       # PRIMARY treatment
