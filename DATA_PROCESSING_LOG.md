@@ -283,8 +283,8 @@ England MSOA11s with 0% missing.
    non-England row, `baseline_households_2011 ≤ 0`, any baseline value varying
    across years within an MSOA. All passed.
 5. **Outputs** in `data/processed/`:
-   - `final_msoa_year_dissertation_panel.parquet` + `.csv` (81,492 × 109; was 97 before accessibility and green belt, 87 before age, 78 before the IMD revision),
-   - `msoa_baseline_characteristics.parquet` + `.csv` (6,791 × 71; was 59 before accessibility and green belt, 49 before age, 27 before the IMD revision),
+   - `final_msoa_year_dissertation_panel.parquet` + `.csv` (81,492 × 143; was 109 before the spatial spillover variables, 97 before accessibility and green belt, 87 before age, 78 before the IMD revision),
+   - `msoa_baseline_characteristics.parquet` + `.csv` (6,791 × 86; was 71 before the spatial spillover variables, 59 before accessibility and green belt, 49 before age, 27 before the IMD revision),
    - `transactions_regression_ready.parquet` (8.1M rows, parquet only),
    - `transactions_analysis.parquet` and `newbuilds_analysis.parquet` (fuller
      detail).
@@ -479,4 +479,28 @@ Script `src/11e_prepare_greenbelt.py`; QA in `outputs/qa/greenbelt/`.
    and +0.07 / +0.08 with the public-transport accessibility composite / distance to town centre.
 7. **Limits.** Generalised boundaries make shares approximate near edges; designation is a snapshot at March 2011 (the national designated area changed by
    about 0.3% to 2015); green belt status is a planning designation, not land cover.
+
+## O. Spatial spillover exposure (added 2026-10-09)
+
+Scripts `src/13b_prepare_spatial_spillovers.py` (runs after 13, before 14), `src/spillover_methods.py`, `src/eda/eda_10_spillover_exposure.py`, `src/models/m05_spillovers.py`.
+Method and equations: `docs/spillover_exposure_methodology.md`. QA: `outputs/qa/spatial_spillovers/`. No new downloads (existing boundaries, centroids and intermediate tables).
+
+1. **Networks saved** in `data/interim/geography_crosswalks/`: `msoa11_spatial_neighbors_queen.parquet/.csv` (38,594 directed edges; 38,592 genuine queen edges, 2 `island_fallback` edges
+   for the Isles of Scilly; 8,444 cross-LAD), `msoa11_spatial_neighbors_distance.parquet` (451,886 directed pairs within 10 km, flags for 5 km, exponential weights with a 3 km decay), plus
+   `msoa11_spatial_characteristics.parquet` (one row per MSOA) and `msoa_year_spillover_exposure.parquet` (one row per MSOA-year).
+2. **Variables** (merged into the final panel; static ones also into the baseline table): pooled neighbouring construction rates (queen primary; lag 1; three-year cumulative; 5 km; 10 km; distance-weighted),
+   the preliminary neighbour mean of rates, cross-LAD rate, household-weighted neighbouring baseline income and the income gap, and sale-weighted neighbouring log prices. Panel 109 to 143 columns, baseline 71 to 86.
+   Undefined neighbourhoods are NaN with flags (480 MSOAs have no centroid within 5 km, 41 none within 10 km, 3,390 no cross-LAD queen neighbour); they are not zero.
+3. **Checks passed:** reproduction of the existing row-standardised queen neighbour mean (max difference 4.3e-14); 280 manual recomputations on 40 random MSOA-years; neighbour counts equal the EDA's
+   (mean 5.683, 1 to 22); no self or duplicate edges; genuine queen edges reciprocal; 2012 lagged exposures defined through the upstream lookback; panel rows (81,492) and keys unchanged and no existing column
+   changed against the previous build (`panel_integrity_vs_previous_build.csv`); 74 tests.
+4. **Lookback quality** (`lookback_year_coverage.csv`): panel construction against MHCLG official completions is 1.00 in 2011, 0.89 in 2010 and 0.94 in 2009; this affects only the older lags for 2012-2013.
+5. **Exploratory findings** (`outputs/eda/SPILLOVER_EXPOSURE_REPORT.md`): own and neighbouring construction correlate 0.22 pooled and 0.33 between MSOAs but only 0.05 within (two-way demeaned);
+   richer MSOAs are surrounded by more construction (mean pooled queen rate 7.8 in the lowest income quartile and 11.1 in the highest, 2016-2022); own and neighbouring log income correlate 0.86; MSOAs with no centroid within 5 km are rural (density 144 against 3,322).
+6. **Model lab (`m05`) now reads the persisted variables.** The preliminary regressions were reproduced exactly (max difference 6e-17, same samples). Specification comparison on one common sample of 50,480 MSOA-years
+   (the 5 km measure is undefined for 7% of MSOA-years): the own-construction coefficient is stable across specifications; neighbouring construction is insignificant in M3 for the queen measures and in M6 for the queen measures,
+   while the 5 km and distance-weighted measures are negative and significant in M6 (-0.000205, p = 0.0001; -0.000294, p = 0.011) but positive and not significant in M3 (the distance-weighted M3 coefficient 0.0008 has p = 0.07);
+   the neighbour term and its interaction with focal income are jointly insignificant (p = 0.36 in M3, 0.51 in M6). The sign change between M3 and M6 has not been investigated; with LAD-by-year effects overlapping
+   neighbour pools induce dependence within a LAD, so these are exploratory associations only.
+7. **Limitations:** exposures that use 2022-2023 construction are understated (missing UPRNs); distance measures are undefined for remote MSOAs; neighbour households are 2011 values; the 3 km decay and 5/10 km radii are modelling choices.
 

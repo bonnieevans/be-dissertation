@@ -107,6 +107,23 @@ def queen_weights(ids_order: list[str] | None = None):
     return w, islands
 
 
+def queen_edge_table() -> pd.DataFrame:
+    """Directed queen-contiguity edges (focal, neighbour) with edge_type 'queen' for genuine shared-boundary contiguity and
+    'island_fallback' for the nearest-neighbour connections that queen_weights() adds for island MSOAs. Uses exactly the same
+    construction as queen_weights(), so the union of both types equals its neighbour sets."""
+    from libpysal.weights import Queen
+
+    gdf = msoa_gdf().sort_values("msoa11cd").reset_index(drop=True)
+    w0 = Queen.from_dataframe(gdf, ids=gdf["msoa11cd"].tolist(), use_index=False, silence_warnings=True)
+    genuine = {(a, b) for a, nb in w0.neighbors.items() for b in nb}
+    w, _ = queen_weights()
+    allpairs = {(a, b) for a, nb in w.neighbors.items() for b in nb}
+    if not genuine <= allpairs:
+        raise RuntimeError("queen_weights() dropped genuine queen-contiguity edges.")
+    rows = [(a, b, "queen" if (a, b) in genuine else "island_fallback") for a, b in sorted(allpairs)]
+    return pd.DataFrame(rows, columns=["focal_msoa11cd", "neighbour_msoa11cd", "edge_type"])
+
+
 def style() -> None:
     plt.rcParams.update({"figure.dpi": 100, "axes.grid": True, "grid.alpha": 0.25,
                          "axes.spines.top": False, "axes.spines.right": False,

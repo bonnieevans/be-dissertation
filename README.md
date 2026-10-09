@@ -47,6 +47,7 @@ Scripts run in numeric order from `src/`, each writing its own log to
 | `11c_prepare_accessibility.py` | DfT Journey Time Statistics 2014 (8 services x public transport/car), key-services composites, straight-line distance to the nearest 2004 town centre |
 | `12_build_msoa_price_panel.py` | MSOA11 x year price outcomes |
 | `13_build_msoa_newbuild_panel.py` | MSOA11 x year new-build counts + lags (tenure-agnostic) |
+| `13b_prepare_spatial_spillovers.py` | spatial neighbour lookups (queen, 5/10 km, distance decay) and neighbouring-construction / income / price exposure variables (`outputs/qa/spatial_spillovers/`) |
 | `14_merge_final_panel.py` | final panel + baseline table + transaction-level robustness file |
 | `15_run_diagnostics.py` | correlation matrix + VIF (interactions computed on the fly) |
 | `15c_accessibility_diagnostics.py` | accessibility representativeness: correlations, PCA, public transport vs car, overlap with moderators, maps (`outputs/qa/accessibility/`) |
@@ -64,14 +65,14 @@ for f in 00_check_environment 01_inventory_ucl_files 02_clean_transactions \
          06_prepare_income 07_prepare_imd2015 08_prepare_census2011_tenure \
          09_prepare_census2011_density 10_prepare_census2011_education \
          11_prepare_census2011_unemployment 11b_prepare_census2011_age 11c_prepare_accessibility 11e_prepare_greenbelt 12_build_msoa_price_panel \
-         13_build_msoa_newbuild_panel 14_merge_final_panel 15_run_diagnostics \
+         13_build_msoa_newbuild_panel 13b_prepare_spatial_spillovers 14_merge_final_panel 15_run_diagnostics \
          15b_imd_revision_diagnostics 15c_accessibility_diagnostics \
          17_quality_assurance 18_summary_statistics 19_make_figures 20_export_excel; do
     python3 "${f}.py" || break
 done
 ```
 
-Run tests with `pytest tests/` (59 tests: price calculation, geography
+Run tests with `pytest tests/` (74 tests: price calculation, geography
 joins, new-build dedup, IMD transform / reproduction of the published IMD /
 population weighting / moderator switches, income-duplication QA, panel unit-root /
 cross-section-dependence tests, within transformation, wild-cluster bootstrap).
@@ -94,6 +95,7 @@ Two further layers sit on top of the final panel. Neither writes to `data/proces
 | `eda/eda_07_report.py` | assembles `EDA_REPORT.md` from the tables |
 | `11d_prepare_accessibility2011.py` | older DfT Accessibility Statistics 2011 (2001 LSOA codes) moved to MSOA11; comparison only, not merged |
 | `eda/eda_09_accessibility_2011_vs_2014.py` | rank agreement between the 2011 and 2014 accessibility series |
+| `eda/eda_10_spillover_exposure.py` | distributions, maps and correlations of the spillover exposure variables |
 | `eda/eda_08_baseline_persistence.py` | persistence of the 2011 baseline characteristics against the 2021 Census (`outputs/eda/persistence/`) |
 
 **`src/models/`: baseline specification lab** (report: `outputs/models/MODEL_LAB_REPORT.md`; every regression is logged in `outputs/models/tables/spec_registry_ALL.csv`)
@@ -109,7 +111,7 @@ Two further layers sit on top of the final panel. Neither writes to `data/proces
 | `models/m07_iv_feasibility.py` | mechanical check of which variation survives the fixed effects |
 | `models/m08_report.py` | assembles `MODEL_LAB_REPORT.md` |
 
-Run order: `cd src/eda && for f in 00_download_msoa11_boundaries eda_01_data_structure eda_02_correlations eda_03_trends eda_04_pca eda_05_stationarity_dependence eda_06_spatial eda_07_report; do python3 $f.py || break; done`, then the same in `src/models` for `m01 ... m08`. Interaction terms, leads, lags and neighbour variables are built in memory; none is stored in a permanent dataset. Notes: `docs/geography_justification.md` (draft), `docs/iv_literature_note.md`.
+Run order: `cd src/eda && for f in 00_download_msoa11_boundaries eda_01_data_structure eda_02_correlations eda_03_trends eda_04_pca eda_05_stationarity_dependence eda_06_spatial eda_07_report; do python3 $f.py || break; done`, then the same in `src/models` for `m01 ... m08`. Interaction terms, leads, lags and neighbour variables are built in memory; none is stored in a permanent dataset. Notes: `docs/geography_justification.md` (draft), `docs/iv_literature_note.md`, `docs/spillover_exposure_methodology.md`.
 
 ## Geography: MSOA11 is primary, MSOA21 is a reference column
 
@@ -167,9 +169,9 @@ also all it uses them for.
 ## Final outputs (`data/processed/`)
 
 - `final_msoa_year_dissertation_panel.parquet` + `.csv` - one row per
-  `msoa11cd x year`, 81,492 rows, 109 columns, zero duplicate keys, 0%
-  missingness on baseline characteristics.
-- `msoa_baseline_characteristics.parquet` + `.csv` - one row per MSOA11 (71 columns).
+  `msoa11cd x year`, 81,492 rows, 143 columns, zero duplicate keys, 0%
+  missingness on baseline characteristics (the spatial spillover variables have documented, flagged missingness where a neighbourhood is undefined).
+- `msoa_baseline_characteristics.parquet` + `.csv` - one row per MSOA11 (86 columns).
 - `transactions_regression_ready.parquet` - transaction-level robustness
   file (parquet-only, 8.1M rows).
 - `transactions_analysis.parquet`, `newbuilds_analysis.parquet` - fuller

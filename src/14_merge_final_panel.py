@@ -55,6 +55,8 @@ REQUIRED_FILES = [
     "msoa11_census2011_age.parquet",
     "msoa11_accessibility2014.parquet",
     "msoa11_greenbelt2011.parquet",
+    "msoa_year_spillover_exposure.parquet",
+    "msoa11_spatial_characteristics.parquet",
 ]
 
 
@@ -100,6 +102,8 @@ def main() -> int:
         ("age_v", "msoa11_census2011_age.parquet"),
         ("access_v", "msoa11_accessibility2014.parquet"),
         ("greenbelt_v", "msoa11_greenbelt2011.parquet"),
+        ("spill_v", "msoa_year_spillover_exposure.parquet"),
+        ("spstat_v", "msoa11_spatial_characteristics.parquet"),
     ]:
         con.execute(f"CREATE OR REPLACE VIEW {view} AS SELECT * FROM read_parquet('{(GEO_DIR / fname).as_posix()}')")
 
@@ -205,6 +209,9 @@ def main() -> int:
 
             gbt.greenbelt_share_2011, gbt.greenbelt_share_z, gbt.greenbelt_any_2011,
 
+            sp.* EXCLUDE (msoa11cd, year),
+            ss.* EXCLUDE (msoa11cd),
+
             (p.sale_count IS NOT NULL AND inc.baseline_income_bhc_2011_12 IS NOT NULL
                 AND imd.imd_ex_housing IS NOT NULL AND tn.social_rent_share_2011 IS NOT NULL
                 AND dn.population_density_2011 IS NOT NULL) AS baseline_complete
@@ -224,6 +231,8 @@ def main() -> int:
         LEFT JOIN age_v ag ON nb.msoa11cd = ag.msoa11cd
         LEFT JOIN access_v ac ON nb.msoa11cd = ac.msoa11cd
         LEFT JOIN greenbelt_v gbt ON nb.msoa11cd = gbt.msoa11cd
+        LEFT JOIN spill_v sp ON nb.msoa11cd = sp.msoa11cd AND nb.year = sp.year
+        LEFT JOIN spstat_v ss ON nb.msoa11cd = ss.msoa11cd
         """
     )
     con.execute(
@@ -272,10 +281,12 @@ def main() -> int:
                    count(DISTINCT population_density_2011) AS n_density,
                    count(DISTINCT age_share_65plus_2011) AS n_age65, count(DISTINCT age_share_25_44_2011) AS n_age2544,
                    count(DISTINCT access_keyservices_pt_min_2014) AS n_acc_pt, count(DISTINCT access_keyservices_car_min_2014) AS n_acc_car,
-                   count(DISTINCT dist_town_centre_km) AS n_dist, count(DISTINCT greenbelt_share_2011) AS n_gb
+                   count(DISTINCT dist_town_centre_km) AS n_dist, count(DISTINCT greenbelt_share_2011) AS n_gb,
+                   count(DISTINCT nbr_queen_n) AS n_qn, count(DISTINCT nbr_queen_income_bhc2012_hhmean) AS n_qinc,
+                   count(DISTINCT income_gap_own_minus_nbr_queen_log) AS n_gap, count(DISTINCT nbr_5km_n) AS n_5n
             FROM panel GROUP BY msoa11cd
             HAVING n_income > 1 OR n_imd > 1 OR n_imd_inc > 1 OR n_dep_z > 1 OR n_dep_q > 1
-                   OR n_inc_z > 1 OR n_tenure > 1 OR n_density > 1 OR n_age65 > 1 OR n_age2544 > 1 OR n_acc_pt > 1 OR n_acc_car > 1 OR n_dist > 1 OR n_gb > 1
+                   OR n_inc_z > 1 OR n_tenure > 1 OR n_density > 1 OR n_age65 > 1 OR n_age2544 > 1 OR n_acc_pt > 1 OR n_acc_car > 1 OR n_dist > 1 OR n_gb > 1 OR n_qn > 1 OR n_qinc > 1 OR n_gap > 1 OR n_5n > 1
         )
         """
     ).fetchone()[0]
@@ -359,7 +370,8 @@ def main() -> int:
             ac.log_access_keyservices_pt_min_2014,
             ac.log_access_keyservices_car_min_2014,
             ac.log_dist_town_centre_km,
-            gbt.greenbelt_share_2011, gbt.greenbelt_share_z, gbt.greenbelt_any_2011
+            gbt.greenbelt_share_2011, gbt.greenbelt_share_z, gbt.greenbelt_any_2011,
+            ss.* EXCLUDE (msoa11cd)
         FROM geog_v g
         LEFT JOIN msoa11_names mn ON g.msoa11cd = mn.msoa11cd
         LEFT JOIN lad_names ln ON g.lad23cd_analysis = ln.lad_code
@@ -373,6 +385,7 @@ def main() -> int:
         LEFT JOIN age_v ag ON g.msoa11cd = ag.msoa11cd
         LEFT JOIN access_v ac ON g.msoa11cd = ac.msoa11cd
         LEFT JOIN greenbelt_v gbt ON g.msoa11cd = gbt.msoa11cd
+        LEFT JOIN spstat_v ss ON g.msoa11cd = ss.msoa11cd
         """
     )
     baseline_df = con.sql("SELECT * FROM baseline_characteristics ORDER BY msoa11cd").df()

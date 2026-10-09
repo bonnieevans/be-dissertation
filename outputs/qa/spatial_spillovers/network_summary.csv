@@ -1,0 +1,10 @@
+network,count
+queen genuine,38592
+queen island fallback,2
+queen cross-LAD edges,8444
+queen directed edges,38594
+5 km directed pairs,136950
+10 km directed pairs,451886
+5 km zero-neighbour MSOAs,480
+10 km zero-neighbour MSOAs,41
+queen MSOAs with no cross-LAD neighbour,3390

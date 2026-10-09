@@ -116,10 +116,21 @@ def main() -> int:
     A("Figures: `outputs/models/figures/m04_leads_lags_event_study.png`, `m04_pretrend_event_study.png`.\n")
 
     A("## 5. Spillovers (m05)\n")
+    A("Neighbouring-construction variables are persisted by `src/13b_prepare_spatial_spillovers.py` (queen contiguity primary; 5 km and distance-decay robustness) and "
+      "read from the final panel. Neighbouring prices are not used as a regressor. All exposures are new builds per 1,000 households (lag 1).\n")
+    A("Reproduction check: the preliminary results (own only; own + mean of neighbours' rates; own + cross-LAD mean), rebuilt from the persisted variables, "
+      "equal the earlier saved results (`m05_reproduction_check.csv`).\n")
     A(md_table(rd("m05_neighbour_variable_info.csv"), nd=3) + "\n")
+    A("Preliminary specifications (neighbour term = mean of neighbours' rates):\n")
     A(md_table(rd("m05_spillover_baseline.csv")[["fe", "spec", "term", "coef", "se", "p"]], nd=6) + "\n")
     A("Four-moderator model with and without the neighbour variable (joint test of the interactions):\n")
     A(md_table(rd("m05_spillover_with_moderators_joint.csv"), nd=4) + "\n")
+    A("Specification comparison on one common sample (MSOA-years where every exposure is defined; MSOAs with no population-weighted centroid within 5 km are dropped). "
+      "Coefficients are per one extra completion per 1,000 households, in log points; interaction uses the focal MSOA's England-wide income z-score:\n")
+    comp = rd("m05_spillover_specification_comparison.csv")
+    A(md_table(comp[["fe", "spec", "term", "coef", "se", "p", "n_obs"]], nd=6) + "\n")
+    A(md_table(rd("m05_spillover_specification_comparison_joint_tests.csv")[["fe", "spec", "wald_chi2", "q", "p_chi2"]], nd=4) + "\n")
+    A("These are exploratory associations, not causal estimates (see `docs/spillover_exposure_methodology.md`).\n")
 
     A("## 6. Standard errors and clustering (m06)\n")
     A(md_table(rd("m06_baseline_se_by_clustering.csv")[["fe", "vcov", "coef", "se", "p", "n_clusters", "se_ratio_to_iid"]], nd=6) + "\n")

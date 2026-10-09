@@ -1,0 +1,3 @@
+dataset,rows_before,rows_after,cols_before,cols_after,columns_changed,changed_columns,duplicate_keys
+final panel,81492,81492,109,143,0,,0
+baseline table,6791,6791,71,86,0,,0

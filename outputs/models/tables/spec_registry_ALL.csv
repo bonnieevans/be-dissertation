@@ -151,18 +151,30 @@ pre_period_balance_region FE only,log1p_cum ~ pre_growth_2012_2015 | region_code
 pre_period_balance_no FE,log1p_cum ~ pre_growth_2012_2015,cross-section,lad,,6791,,ok,no FE
 M3_pretrend_event_study,"log_median_ppsqm ~ i(year, top_q, ref=2015) | msoa11cd + year",2012-2023,lad,,81468,0.0020421691615939,ok,top-quartile construction x year
 M6_pretrend_event_study,"log_median_ppsqm ~ i(year, top_q, ref=2015) | msoa11cd + lad_year",2012-2023,lad,,81468,0.0010348532342251,ok,top-quartile construction x year
-M3_spill_own only (full sample),log_median_ppsqm ~ newbuilds_lag1_per_1000 | msoa11cd + year,main_2016_2023,lad,,54312,0.0001213709292984,ok,own only (full sample)
-M3_spill_own + all-neighbour mean,log_median_ppsqm ~ newbuilds_lag1_per_1000 + nb_mean_all | msoa11cd + year,main_2016_2023,lad,,54312,0.0003752877374922,ok,own + all-neighbour mean
-M3_spill_own only (cross-LAD-neighbour sample),log_median_ppsqm ~ newbuilds_lag1_per_1000 | msoa11cd + year,main_2016_2023,lad,,27192,0.0002214206433479,ok,own only (cross-LAD-neighbour sample)
-M3_spill_own + cross-LAD neighbour mean,log_median_ppsqm ~ newbuilds_lag1_per_1000 + nb_mean_cross_lad | msoa11cd + year,main_2016_2023,lad,,27192,0.000484427805926,ok,own + cross-LAD neighbour mean
-M6_spill_own only (full sample),log_median_ppsqm ~ newbuilds_lag1_per_1000 | msoa11cd + lad_year,main_2016_2023,lad,,54312,6.1126918646792205e-06,ok,own only (full sample)
-M6_spill_own + all-neighbour mean,log_median_ppsqm ~ newbuilds_lag1_per_1000 + nb_mean_all | msoa11cd + lad_year,main_2016_2023,lad,,54312,0.0001043188777235,ok,own + all-neighbour mean
-M6_spill_own only (cross-LAD-neighbour sample),log_median_ppsqm ~ newbuilds_lag1_per_1000 | msoa11cd + lad_year,main_2016_2023,lad,,27192,8.606210940564907e-07,ok,own only (cross-LAD-neighbour sample)
-M6_spill_own + cross-LAD neighbour mean,log_median_ppsqm ~ newbuilds_lag1_per_1000 + nb_mean_cross_lad | msoa11cd + lad_year,main_2016_2023,lad,,27192,1.083355147080134e-05,ok,own + cross-LAD neighbour mean
-M3_spill_mods_four moderators,log_median_ppsqm ~ newbuilds_lag1_per_1000 + x_income + x_deprivation + x_social_rent + x_density | msoa11cd + year,main_2016_2023,lad,,54312,0.0009276207085193,ok,four moderators
-M3_spill_mods_four moderators + neighbour mean,log_median_ppsqm ~ newbuilds_lag1_per_1000 + x_income + x_deprivation + x_social_rent + x_density + nb_mean_all | msoa11cd + year,main_2016_2023,lad,,54312,0.0012130914926142,ok,four moderators + neighbour mean
-M6_spill_mods_four moderators,log_median_ppsqm ~ newbuilds_lag1_per_1000 + x_income + x_deprivation + x_social_rent + x_density | msoa11cd + lad_year,main_2016_2023,lad,,54312,0.000253249511961,ok,four moderators
-M6_spill_mods_four moderators + neighbour mean,log_median_ppsqm ~ newbuilds_lag1_per_1000 + x_income + x_deprivation + x_social_rent + x_density + nb_mean_all | msoa11cd + lad_year,main_2016_2023,lad,,54312,0.0003467555846963,ok,four moderators + neighbour mean
+M3_prelim_own only (full sample),log_median_ppsqm ~ newbuilds_lag1_per_1000 | msoa11cd + year,main_2016_2023,lad,,54312,0.0001213709292984,ok,own only (full sample)
+M3_prelim_own + all-neighbour mean,log_median_ppsqm ~ newbuilds_lag1_per_1000 + nb_mean_all | msoa11cd + year,main_2016_2023,lad,,54312,0.0003752877374922,ok,own + all-neighbour mean
+M3_prelim_own only (cross-LAD-neighbour sample),log_median_ppsqm ~ newbuilds_lag1_per_1000 | msoa11cd + year,main_2016_2023,lad,,27192,0.0002214206433479,ok,own only (cross-LAD-neighbour sample)
+M3_prelim_own + cross-LAD neighbour mean,log_median_ppsqm ~ newbuilds_lag1_per_1000 + nb_mean_cross_lad_legacy | msoa11cd + year,main_2016_2023,lad,,27192,0.000484427805926,ok,own + cross-LAD neighbour mean
+M6_prelim_own only (full sample),log_median_ppsqm ~ newbuilds_lag1_per_1000 | msoa11cd + lad_year,main_2016_2023,lad,,54312,6.1126918646792205e-06,ok,own only (full sample)
+M6_prelim_own + all-neighbour mean,log_median_ppsqm ~ newbuilds_lag1_per_1000 + nb_mean_all | msoa11cd + lad_year,main_2016_2023,lad,,54312,0.0001043188777235,ok,own + all-neighbour mean
+M6_prelim_own only (cross-LAD-neighbour sample),log_median_ppsqm ~ newbuilds_lag1_per_1000 | msoa11cd + lad_year,main_2016_2023,lad,,27192,8.606210940564907e-07,ok,own only (cross-LAD-neighbour sample)
+M6_prelim_own + cross-LAD neighbour mean,log_median_ppsqm ~ newbuilds_lag1_per_1000 + nb_mean_cross_lad_legacy | msoa11cd + lad_year,main_2016_2023,lad,,27192,1.083355147080134e-05,ok,own + cross-LAD neighbour mean
+M3_prelim_mods_four moderators,log_median_ppsqm ~ newbuilds_lag1_per_1000 + x_income + x_deprivation + x_social_rent + x_density | msoa11cd + year,main_2016_2023,lad,,54312,0.0009276207085193,ok,four moderators
+M3_prelim_mods_four moderators + neighbour mean,log_median_ppsqm ~ newbuilds_lag1_per_1000 + x_income + x_deprivation + x_social_rent + x_density + nb_mean_all | msoa11cd + year,main_2016_2023,lad,,54312,0.0012130914926142,ok,four moderators + neighbour mean
+M6_prelim_mods_four moderators,log_median_ppsqm ~ newbuilds_lag1_per_1000 + x_income + x_deprivation + x_social_rent + x_density | msoa11cd + lad_year,main_2016_2023,lad,,54312,0.000253249511961,ok,four moderators
+M6_prelim_mods_four moderators + neighbour mean,log_median_ppsqm ~ newbuilds_lag1_per_1000 + x_income + x_deprivation + x_social_rent + x_density + nb_mean_all | msoa11cd + lad_year,main_2016_2023,lad,,54312,0.0003467555846963,ok,four moderators + neighbour mean
+M3_spillcomp_1 own only,log_median_ppsqm ~ newbuilds_lag1_per_1000 | msoa11cd + year,common spillover sample,lad,,50480,0.000124648196319,ok,1 own only
+M3_spillcomp_2 + queen mean of rates,log_median_ppsqm ~ newbuilds_lag1_per_1000 + nbr_queen_nb_mean_rate_lag1 | msoa11cd + year,common spillover sample,lad,,50480,0.0004036684910938,ok,2 + queen mean of rates
+M3_spillcomp_3 + queen pooled rate,log_median_ppsqm ~ newbuilds_lag1_per_1000 + nbr_queen_nb_lag1_rate_per1000 | msoa11cd + year,common spillover sample,lad,,50480,0.0004945858117273,ok,3 + queen pooled rate
+M3_spillcomp_4 + 5 km pooled rate,log_median_ppsqm ~ newbuilds_lag1_per_1000 + nbr_5km_nb_lag1_rate_per1000 | msoa11cd + year,common spillover sample,lad,,50480,0.0004397811596557,ok,4 + 5 km pooled rate
+M3_spillcomp_5 + distance-weighted rate,log_median_ppsqm ~ newbuilds_lag1_per_1000 + nbr_exp10km_nb_lag1_rate_per1000 | msoa11cd + year,common spillover sample,lad,,50480,0.0019590574254978,ok,5 + distance-weighted rate
+M3_spillcomp_6 + queen pooled rate x focal income,log_median_ppsqm ~ newbuilds_lag1_per_1000 + nbr_queen_nb_lag1_rate_per1000 + x_nbq_inc | msoa11cd + year,common spillover sample,lad,,50480,0.0007124475357923,ok,6 + queen pooled rate x focal income
+M6_spillcomp_1 own only,log_median_ppsqm ~ newbuilds_lag1_per_1000 | msoa11cd + lad_year,common spillover sample,lad,,50480,9.241442583074466e-06,ok,1 own only
+M6_spillcomp_2 + queen mean of rates,log_median_ppsqm ~ newbuilds_lag1_per_1000 + nbr_queen_nb_mean_rate_lag1 | msoa11cd + lad_year,common spillover sample,lad,,50480,6.101474140896013e-05,ok,2 + queen mean of rates
+M6_spillcomp_3 + queen pooled rate,log_median_ppsqm ~ newbuilds_lag1_per_1000 + nbr_queen_nb_lag1_rate_per1000 | msoa11cd + lad_year,common spillover sample,lad,,50480,4.1650534868153954e-05,ok,3 + queen pooled rate
+M6_spillcomp_4 + 5 km pooled rate,log_median_ppsqm ~ newbuilds_lag1_per_1000 + nbr_5km_nb_lag1_rate_per1000 | msoa11cd + lad_year,common spillover sample,lad,,50480,0.0004007978201915,ok,4 + 5 km pooled rate
+M6_spillcomp_5 + distance-weighted rate,log_median_ppsqm ~ newbuilds_lag1_per_1000 + nbr_exp10km_nb_lag1_rate_per1000 | msoa11cd + lad_year,common spillover sample,lad,,50480,0.0002895049980683,ok,5 + distance-weighted rate
+M6_spillcomp_6 + queen pooled rate x focal income,log_median_ppsqm ~ newbuilds_lag1_per_1000 + nbr_queen_nb_lag1_rate_per1000 + x_nbq_inc | msoa11cd + lad_year,common spillover sample,lad,,50480,0.0001296277611821,ok,6 + queen pooled rate x focal income
 M3_se_iid,log_median_ppsqm ~ newbuilds_lag1_per_1000 | msoa11cd + year,main_2016_2023,iid,,54312,0.0001213709292984,ok,SE: iid
 M3_se_hc1,log_median_ppsqm ~ newbuilds_lag1_per_1000 | msoa11cd + year,main_2016_2023,hc1,,54312,0.0001213709292984,ok,SE: hc1
 M3_se_msoa,log_median_ppsqm ~ newbuilds_lag1_per_1000 | msoa11cd + year,main_2016_2023,msoa,,54312,0.0001213709292984,ok,SE: msoa

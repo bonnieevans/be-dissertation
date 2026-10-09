@@ -159,6 +159,23 @@ accessibility_2011:
     food_store:        {file: acs0507-2011.csv, pop_prefix: All_households, pt_prefix: supPTtime,  car_prefix: supcarnewtime}
     town_centre:       {file: acs0508-2011.csv, pop_prefix: All_households, pt_prefix: townPTtime, car_prefix: towncarnewtime}
 
+# Spatial spillover exposure (neighbouring-MSOA construction, income and prices). See docs/spillover_exposure_methodology.md.
+# Built by src/13b_prepare_spatial_spillovers.py. Neighbours are defined on the fixed 2011 MSOA geography.
+spatial_spillovers:
+  enabled: true
+  geography: MSOA11
+  primary_network: queen
+  queen_attach_islands: true          # island MSOAs are attached to their nearest neighbour; edges flagged edge_type = island_fallback
+  distance_radii_m: [5000, 10000]
+  distance_decay_m: 3000              # proposed modelling choice, not an estimated parameter
+  distance_max_m: 10000
+  primary_construction_lag: 1
+  compute_cross_lad: true
+  compute_neighbour_prices: true
+  compute_second_order: false
+  boundaries_geojson: data/raw/geography/msoa11_boundaries/MSOA11_BGC_England.geojson
+  centroids_geojson: data/raw/geography/msoa11_pwc/MSOA11_PWC_England_BNG.geojson
+
 lagged_exposure:
   lags_years: [1, 2, 3]
   primary_treatment: newbuilds_lag1_per_1000       # PRIMARY treatment

@@ -452,9 +452,15 @@ Figures: `outputs/models/figures/m04_leads_lags_event_study.png`, `m04_pretrend_
 
 ## 5. Spillovers (m05)
 
+Neighbouring-construction variables are persisted by `src/13b_prepare_spatial_spillovers.py` (queen contiguity primary; 5 km and distance-decay robustness) and read from the final panel. Neighbouring prices are not used as a regressor. All exposures are new builds per 1,000 households (lag 1).
+
+Reproduction check: the preliminary results (own only; own + mean of neighbours' rates; own + cross-LAD mean), rebuilt from the persisted variables, equal the earlier saved results (`m05_reproduction_check.csv`).
+
 | n_msoa | share_with_cross_lad_neighbour | mean_n_neighbours |
 |---|---|---|
 | 6791.000 | 0.501 | 5.683 |
+
+Preliminary specifications (neighbour term = mean of neighbours' rates):
 
 | fe | spec | term | coef | se | p |
 |---|---|---|---|---|---|
@@ -479,6 +485,42 @@ Four-moderator model with and without the neighbour variable (joint test of the 
 | M3 | four moderators + neighbour mean | 10.6536 | 4 | 0.0307 | 2.6634 | 0.0328 |
 | M6 | four moderators | 2.6210 | 4 | 0.6231 | 0.6553 | 0.6236 |
 | M6 | four moderators + neighbour mean | 2.6927 | 4 | 0.6105 | 0.6732 | 0.6111 |
+
+Specification comparison on one common sample (MSOA-years where every exposure is defined; MSOAs with no population-weighted centroid within 5 km are dropped). Coefficients are per one extra completion per 1,000 households, in log points; interaction uses the focal MSOA's England-wide income z-score:
+
+| fe | spec | term | coef | se | p | n_obs |
+|---|---|---|---|---|---|---|
+| M3 | 1 own only | newbuilds_lag1_per_1000 | 0.000050 | 0.000038 | 0.189868 | 50480 |
+| M3 | 2 + queen mean of rates | newbuilds_lag1_per_1000 | 0.000046 | 0.000035 | 0.188874 | 50480 |
+| M3 | 2 + queen mean of rates | queen mean rate | 0.000158 | 0.000142 | 0.266060 | 50480 |
+| M3 | 3 + queen pooled rate | newbuilds_lag1_per_1000 | 0.000045 | 0.000035 | 0.194694 | 50480 |
+| M3 | 3 + queen pooled rate | queen pooled rate | 0.000179 | 0.000139 | 0.199728 | 50480 |
+| M3 | 4 + 5 km pooled rate | newbuilds_lag1_per_1000 | 0.000047 | 0.000036 | 0.194561 | 50480 |
+| M3 | 4 + 5 km pooled rate | 5 km pooled rate | 0.000220 | 0.000230 | 0.339634 | 50480 |
+| M3 | 5 + distance-weighted rate | newbuilds_lag1_per_1000 | 0.000041 | 0.000035 | 0.242224 | 50480 |
+| M3 | 5 + distance-weighted rate | distance-weighted rate | 0.000796 | 0.000438 | 0.070020 | 50480 |
+| M3 | 6 + queen pooled rate x focal income | newbuilds_lag1_per_1000 | 0.000044 | 0.000034 | 0.198090 | 50480 |
+| M3 | 6 + queen pooled rate x focal income | queen pooled rate | 0.000157 | 0.000135 | 0.244315 | 50480 |
+| M3 | 6 + queen pooled rate x focal income | neighbour construction x focal income z | 0.000127 | 0.000142 | 0.373760 | 50480 |
+| M6 | 1 own only | newbuilds_lag1_per_1000 | 0.000010 | 0.000025 | 0.685694 | 50480 |
+| M6 | 2 + queen mean of rates | newbuilds_lag1_per_1000 | 0.000009 | 0.000025 | 0.710733 | 50480 |
+| M6 | 2 + queen mean of rates | queen mean rate | -0.000054 | 0.000072 | 0.454517 | 50480 |
+| M6 | 3 + queen pooled rate | newbuilds_lag1_per_1000 | 0.000010 | 0.000025 | 0.703878 | 50480 |
+| M6 | 3 + queen pooled rate | queen pooled rate | -0.000042 | 0.000070 | 0.549861 | 50480 |
+| M6 | 4 + 5 km pooled rate | newbuilds_lag1_per_1000 | 0.000005 | 0.000025 | 0.825318 | 50480 |
+| M6 | 4 + 5 km pooled rate | 5 km pooled rate | -0.000205 | 0.000052 | 0.000100 | 50480 |
+| M6 | 5 + distance-weighted rate | newbuilds_lag1_per_1000 | 0.000005 | 0.000025 | 0.850675 | 50480 |
+| M6 | 5 + distance-weighted rate | distance-weighted rate | -0.000294 | 0.000115 | 0.010789 | 50480 |
+| M6 | 6 + queen pooled rate x focal income | newbuilds_lag1_per_1000 | 0.000009 | 0.000025 | 0.714598 | 50480 |
+| M6 | 6 + queen pooled rate x focal income | queen pooled rate | -0.000052 | 0.000070 | 0.461113 | 50480 |
+| M6 | 6 + queen pooled rate x focal income | neighbour construction x focal income z | 0.000062 | 0.000059 | 0.292136 | 50480 |
+
+| fe | spec | wald_chi2 | q | p_chi2 |
+|---|---|---|---|---|
+| M3 | 6 + queen pooled rate x focal income | 2.0425 | 2 | 0.3601 |
+| M6 | 6 + queen pooled rate x focal income | 1.3580 | 2 | 0.5071 |
+
+These are exploratory associations, not causal estimates (see `docs/spillover_exposure_methodology.md`).
 
 ## 6. Standard errors and clustering (m06)
 
@@ -540,7 +582,7 @@ See `docs/iv_literature_note.md`. The funding-indicator check from the plan is n
 
 ## 8. Specification registry
 
-192 regressions were run across m01-m07 (`spec_registry_ALL.csv`); 0 failed. Because many specifications are compared, p-values from a single specification should be read with that count in mind; the Holm adjustment in section 3 covers the interaction tests within each family only.
+204 regressions were run across m01-m07 (`spec_registry_ALL.csv`); 0 failed. Because many specifications are compared, p-values from a single specification should be read with that count in mind; the Holm adjustment in section 3 covers the interaction tests within each family only.
 
 ## 9. Notes on this build
 

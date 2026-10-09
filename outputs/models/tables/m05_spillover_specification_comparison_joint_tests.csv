@@ -1,0 +1,3 @@
+fe,spec,test,wald_chi2,q,p_chi2,F,p_F
+M3,6 + queen pooled rate x focal income,neighbour term and its interaction with income jointly zero,2.0424958504244883,2,0.36014522531944304,1.0212479252122442,0.36142351578314613
+M6,6 + queen pooled rate x focal income,neighbour term and its interaction with income jointly zero,1.3580349315277822,2,0.5071150055226077,0.6790174657638911,0.5079111686521827
